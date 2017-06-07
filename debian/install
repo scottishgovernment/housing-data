@@ -1,0 +1,4 @@
+node_modules            /opt/housing-data
+src                     /opt/housing-data
+couch                   /opt/housing-data
+config.yaml             /opt/housing-data

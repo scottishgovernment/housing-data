@@ -1,0 +1,6 @@
+application:
+    name: housing-data
+ons:
+    cpiUrl: https://www.ons.gov.uk/generator?format=csv&uri=/economy/inflationandpriceindices/timeseries/d7bt/mm23
+couch:
+    url: http://localhost:5984/

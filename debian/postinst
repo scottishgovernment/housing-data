@@ -1,0 +1,31 @@
+#!/bin/sh
+# postinst script for ons-importer
+#
+# see: dh_installdeb(1)
+
+set -e
+
+configure() {
+  . /etc/profile
+  cd /opt/ons-importer/couch
+  couchdb-push http://localhost:5984/ons . \
+    > /var/log/ons-importera/couchdb-push.log
+}
+
+case "$1" in
+    configure)
+      configure
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0

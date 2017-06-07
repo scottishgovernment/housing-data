@@ -1,0 +1,11 @@
+Source: housing-data
+Section: mygov
+Priority: optional
+Maintainer: David Sinclair <david.sinclair@gov.scot>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.4
+
+Package: housing-data
+Architecture: all
+Depends: ${misc:Depends}
+Description: Housing data
