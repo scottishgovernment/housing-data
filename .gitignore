@@ -4,10 +4,6 @@
 debian/changelog
 debian/debhelper-build-stamp
 debian/files
-debian/trigger
-debian/trigger.debhelper.log
-debian/trigger.*.debhelper
-debian/trigger.substvars
 node_modules
 npm-debug.log
 target

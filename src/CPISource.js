@@ -15,9 +15,9 @@ class CPISource {
 
     get(callback) {
         // get the most recent CPI data from the store
-        this.store.latest((error, cachedCPI) => {
-            if (error) {
-                callback(error);
+        this.store.latest((latestStoreError, cachedCPI) => {
+            if (latestStoreError) {
+                callback(latestStoreError);
                 return;
             }
 
@@ -28,10 +28,16 @@ class CPISource {
             }
 
             // fetch and store the most recent data from source
-            this.source.get((error, cpi) => {
-                this.store.store(cpi, error => {
-                    if (error) {
-                        callback(error);
+            this.source.get((sourceError, cpi) => {
+
+                if (sourceError) {
+                    callback(sourceError);
+                    return;
+                }
+
+                this.store.store(cpi, storeError => {
+                    if (storeError) {
+                        callback(storeError);
                     } else {
                         callback(null, cpi);
                     }

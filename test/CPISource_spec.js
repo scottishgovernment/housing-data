@@ -3,7 +3,7 @@ var CPISource = require('../target/src/CPISource.js');
 
 describe('CPISource', function() {
 
-    it('error from store.latest', function (done) {
+    it('Returns error from store.latest', function (done) {
 
         // ARRANGE
         const source = undefined;
@@ -19,7 +19,7 @@ describe('CPISource', function() {
         });
     });
 
-    it('error from store.store', function (done) {
+    it('Returns error from store.store', function (done) {
 
         // ARRANGE
         const dataFromSource = { nextRelease: '2017-01-01'};
@@ -36,7 +36,23 @@ describe('CPISource', function() {
         });
     });
 
-    it('no data in store returns data from source', function (done) {
+    it('Returns error from source', function (done) {
+
+        // ARRANGE
+        const source = erroringSource('Error from source');
+        const store = fakeStore(undefined, { nextRelease: '2015-01-01'}, "Error from store", undefined);
+        const sut = new CPISource(source, store);
+
+        // ACT
+        sut.get((error, data) => {
+            //ASSERT
+            expect(error).toEqual('Error from source');
+            expect(data).toBeUndefined();
+            done();
+        });
+    });
+
+    it('Returns data from source if no data in store', function (done) {
 
         // ARRANGE
         const dataFromSource = { nextRelease: '2017-01-01'};
@@ -53,7 +69,7 @@ describe('CPISource', function() {
         });
     });
 
-    it('out of date data in store returns data from source', function (done) {
+    it('Returns data from source if data in store is out of date', function (done) {
 
         // ARRANGE
         const dataFromSource = { nextRelease: '2017-01-01'};
@@ -71,7 +87,7 @@ describe('CPISource', function() {
         });
     });
 
-    it('up to date data in store returns data from source', function (done) {
+    it('Returns data from store if data up to date', function (done) {
 
         // ARRANGE
         const dataFromSource = { nextRelease: '2016-01-01'};
@@ -105,6 +121,14 @@ describe('CPISource', function() {
         return {
             get: function (callback) {
                 callback(null, data);
+            }
+        }
+    }
+
+    function erroringSource(error) {
+        return {
+            get: function (callback) {
+                callback(error);
             }
         }
     }

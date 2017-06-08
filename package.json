@@ -16,7 +16,8 @@
     "config-weaver": "0.0.15",
     "express": "^4.15.3",
     "fast-csv": "^2.4.0",
-    "request": "^2.81.0"
+    "request": "^2.81.0",
+    "sealant": "0.0.3"
   },
   "devDependencies": {
     "grunt": "^1.0.1",

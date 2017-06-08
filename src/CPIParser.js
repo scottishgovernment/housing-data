@@ -54,17 +54,13 @@ class CPIParser {
                     break;
                 }
             })
-            .on('end', (count, error) => {
-
+            .on('end', () => {
                 const validationErrors = validateCPIData(cpiData);
                 if (validationErrors.length === 0) {
                     callback(undefined, cpiData);
                 } else {
                     callback(validationErrors, undefined);
                 }
-
-
-
             });
     }
 }
@@ -92,7 +88,7 @@ function monthIndex(monthStr) {
 
     var index = monthNames.indexOf(monthStr);
     if (index === -1) {
-        throw 'Unrecognised Month name: ' + monStr;
+        throw 'Unrecognised Month name: ' + monthStr;
     }
 
     // make the date 1 based
@@ -114,6 +110,5 @@ function convertNextReleaseDate(input) {
       const newParts = [parts[2], monthIndex(parts[1].toUpperCase()), parts[0]];
       return newParts.join('-');
 }
-
 
 module.exports = CPIParser;

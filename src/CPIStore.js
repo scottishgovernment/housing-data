@@ -22,7 +22,10 @@ class CPIStore {
 
             var parsedBody = JSON.parse(body);
             if (parsedBody.total_rows > 0) {
-                callback(undefined, parsedBody.rows[0].doc);
+                var doc = parsedBody.rows[0].doc;
+                 delete doc['_id'];
+                 delete doc['_rev'];
+                callback(undefined, doc);
             } else {
                 callback(null, null);
             }
@@ -30,7 +33,7 @@ class CPIStore {
     }
 
     store(cpi, callback) {
-        const url = this.couchUrl + 'ons/_design/ons/_view/cpi?key="' + cpi.releaseDate + '"'
+        const url = this.couchUrl + 'ons/_design/ons/_view/cpi?key="' + cpi.releaseDate + '"';
         request(url, (error, response, body) => {
             if (error) {
                 callback(error);
@@ -45,18 +48,22 @@ class CPIStore {
             }
 
             // post the new document
-            var options = {
-                uri: this.couchUrl + 'ons',
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                json: cpi
-            };
-
-            request(options, (error, response, body) => callback(error, body));
+            postToCouch(this, callback);
         });
     }
+}
+
+function postToCouch(store, callback) {
+    var options = {
+        uri: store.couchUrl + 'ons',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        json: cpi
+    };
+
+    request(options, (error, response, body) => callback(error, body));
 }
 
 module.exports = CPIStore;
