@@ -5,6 +5,7 @@
  * information acording to the next release date.
  **/
 const request = require('request');
+const dateUtils = require('./dateUtils');
 
 class CPISource {
 
@@ -22,7 +23,7 @@ class CPISource {
             }
 
             // if we hava cached cpi data and it is not out of date then return that
-            if (cachedCPI && !outOfDate(cachedCPI)) {
+            if (cachedCPI && dateUtils.compareWithNow(cachedCPI.nextRelease) < 0) {
                 callback(null, cachedCPI);
                 return;
             }
@@ -45,16 +46,6 @@ class CPISource {
             });
         });
     }
-}
-
-function outOfDate(cpi) {
-    const now = new Date();
-    const nowDate = [
-        now.getUTCFullYear(),
-        now.getUTCMonth(),
-        now.getUTCDate()
-    ].join('-');
-    return nowDate.localeCompare(cpi.nextRelease) >= 0;
 }
 
 module.exports = CPISource;

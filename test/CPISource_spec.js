@@ -1,6 +1,5 @@
 var CPISource = require('../target/src/CPISource.js');
 
-
 describe('CPISource', function() {
 
     it('Returns error from store.latest', function (done) {

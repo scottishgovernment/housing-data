@@ -14,6 +14,7 @@ class CPIStore {
 
     latest(callback) {
         const url = this.couchUrl + 'ons/_design/ons/_view/cpi?limit=1&include_docs=true&descending=true';
+
         request(url, (error, response, body) => {
             if (error) {
                 callback(error);
@@ -48,12 +49,12 @@ class CPIStore {
             }
 
             // post the new document
-            postToCouch(this, callback);
+            postToCouch(this, cpi, callback);
         });
     }
 }
 
-function postToCouch(store, callback) {
+function postToCouch(store, cpi, callback) {
     var options = {
         uri: store.couchUrl + 'ons',
         method: 'POST',

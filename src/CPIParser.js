@@ -3,6 +3,8 @@
 /**
  * Parser for the CPI data from ONS.
  **/
+const dateUtils = require('./dateUtils');
+
 class CPIParser {
 
     parse(inputStream, callback) {
@@ -107,8 +109,13 @@ function convertReleaseDate(input) {
 function convertNextReleaseDate(input) {
       // format used in the csv file for next release date: 13 Jun 2017
       const parts = input.split(' ');
-      const newParts = [parts[2], monthIndex(parts[1].toUpperCase()), parts[0]];
+      const monthIndexRes = monthIndex(parts[1].toUpperCase());
+      const newParts = [
+        parts[2],
+        dateUtils.pad(2, monthIndexRes),
+        dateUtils.pad(2, parts[0])];
       return newParts.join('-');
 }
+
 
 module.exports = CPIParser;
