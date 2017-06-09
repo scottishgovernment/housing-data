@@ -3,7 +3,7 @@
 /**
  * Parser for the CPI data from ONS.
  **/
-const dateUtils = require('./dateUtils');
+const dateUtils = require('./dateUtils')();
 
 class CPIParser {
 

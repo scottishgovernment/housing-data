@@ -3,7 +3,7 @@
 /**
  * Express app that defines endpoints for the CPI data service.
  */
-const dateUtils = require('./dateUtils');
+const dateUtils = require('./dateUtils')();
 
 class CPIApp {
 

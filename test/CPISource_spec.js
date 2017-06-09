@@ -86,6 +86,27 @@ describe('CPISource', function() {
         });
     });
 
+    it('Returns data from source if data on day of nextUpdate', function (done) {
+
+        // ARRANGE
+        const dataFromSource = { nextRelease: '2017-01-01'};
+        const source = fakeSource(dataFromSource);
+        const dataFromStore = { nextRelease: '2017-01-01'};
+        const store = fakeStore(null, dataFromStore, null, undefined);
+        const dateSource = {
+            date: () => new Date(2017, 01, 01, 12, 0, 0, 0)
+        }
+        const sut = new CPISource(source, store, dateSource);
+
+        // ACT
+        sut.get((error, data) => {
+            //ASSERT
+            expect(error).toBeNull();
+            expect(data).toBe(dataFromSource);
+            done();
+        });
+    });
+
     it('Returns data from store if data up to date', function (done) {
 
         // ARRANGE

@@ -5,13 +5,13 @@
  * information acording to the next release date.
  **/
 const request = require('request');
-const dateUtils = require('./dateUtils');
 
 class CPISource {
 
-    constructor(source, store) {
+    constructor(source, store, dateSource) {
         this.source = source;
         this.store = store;
+        this.dateUtils = require('./dateUtils')(dateSource);
     }
 
     get(callback) {
@@ -23,7 +23,7 @@ class CPISource {
             }
 
             // if we hava cached cpi data and it is not out of date then return that
-            if (cachedCPI && dateUtils.compareWithNow(cachedCPI.nextRelease) < 0) {
+            if (cachedCPI && this.dateUtils.compareWithNow(cachedCPI.nextRelease) < 0) {
                 callback(null, cachedCPI);
                 return;
             }
