@@ -28,7 +28,7 @@ module.exports = function(grunt) {
                     url: 'http://sonar.digital.gov.uk'
                 },
                 projectKey: pkg.name,
-                projectName: "ONS Importer",
+                projectName: "Housing Data",
                 projectVersion: pkg.version,
                 projectDescription: pkg.description,
                 sources: 'src',

@@ -7,9 +7,9 @@ set -e
 
 configure() {
   . /etc/profile
-  cd /opt/ons-importer/couch
+  cd /opt/housing-data/couch
   couchdb-push http://localhost:5984/ons . \
-    > /var/log/ons-importera/couchdb-push.log
+    > /var/log/housing-data/couchdb-push.log
 }
 
 case "$1" in
