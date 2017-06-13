@@ -1,0 +1,18 @@
+#!/bin/sh -el
+VERSION=${VERSION:-0.$(date +%Y%m%d%H%M)}
+
+while test $# -gt 0; do
+  case "$1" in
+    -v)
+      VERSION=$2;;
+    --ci)
+      ci=true;;
+  esac
+  shift
+done
+
+rm -f debian/changelog
+dch --create --package housing-data -v $VERSION ""
+./debian/rules clean
+./debian/rules build
+fakeroot ./debian/rules binary OUTDIR=.

@@ -4,6 +4,10 @@
 debian/changelog
 debian/debhelper-build-stamp
 debian/files
+debian/housing-data
+debian/housing-data.debhelper.log
+debian/housing-data.*.debhelper
+debian/housing-data.substvars
 node_modules
 npm-debug.log
 target
