@@ -17,12 +17,14 @@ class HousingDataService {
         const CPIStore = require('./CPIStore');
         const CPISource = require('./CPISource');
         const URLCPISource = require('./URLCPISource');
+        const CPIHealth = require('./CPIHealth');
         const CPIApp = require('./CPIApp');
 
         const store = new CPIStore(config.couch.url);
         const onsSource = new URLCPISource(config.ons.cpiUrl);
         const source = new CPISource(onsSource, store);
-        const cpiApp = new CPIApp(source);
+        const health = new CPIHealth();
+        const cpiApp = new CPIApp(source, health);
         cpiApp.register(expressApp);
     }
 

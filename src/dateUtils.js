@@ -25,6 +25,7 @@ module.exports =  function (dateSource) {
         compareWithNow: function (dateStr) {
             const now = dateSource.date();
             const nowDate = this.dateString(now);
+            console.log('comparing ', nowDate, dateStr, nowDate.localeCompare(dateStr));
             return nowDate.localeCompare(dateStr);
         },
 

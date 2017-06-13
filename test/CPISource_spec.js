@@ -95,7 +95,7 @@ describe('CPISource', function() {
         const store = fakeStore(null, dataFromStore, null, undefined);
         const dateSource = {
             date: () => new Date(2017, 01, 01, 12, 0, 0, 0)
-        }
+        };
         const sut = new CPISource(source, store, dateSource);
 
         // ACT

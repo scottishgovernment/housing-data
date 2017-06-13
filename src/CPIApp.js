@@ -7,8 +7,9 @@ const dateUtils = require('./dateUtils')();
 
 class CPIApp {
 
-    constructor(source) {
+    constructor(source, healthchecker) {
         this.source = source;
+        this.healthchecker = healthchecker;
     }
 
     register(expressApp) {
@@ -23,23 +24,7 @@ class CPIApp {
         });
 
         expressApp.get('/health', (req, res) => {
-            this.source.get((error, cpi) => {
-                if (error) {
-                    res.status(500).send({ msg: error });
-                    return;
-                }
-
-                const releaseDateTodayOrBefore = dateUtils.compareWithNow(cpi.releaseDate) >= 0;
-                const nextReleaseInFuture = dateUtils.compareWithNow(cpi.nextRelease) < 0;
-                const ok = releaseDateTodayOrBefore && nextReleaseInFuture;
-                const status = ok ? 200 : 503;
-                const message = 'releaseDate: ' + cpi.releaseDate
-                                + ', nextRelease: ' + cpi.nextRelease;
-                res.status(status).send({
-                    ok: ok,
-                    message: message
-                });
-            });
+            this.healthchecker(source, res);
         });
     }
 }
