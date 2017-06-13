@@ -7,11 +7,10 @@ module.exports =  function (dateSource) {
     if (!dateSource) {
         dateSource = {
             date: () => new Date()
-        }
+        };
     }
 
     return {
-
         dateString: function (d) {
             return [
                 d.getUTCFullYear(),
@@ -32,5 +31,5 @@ module.exports =  function (dateSource) {
         pad: function (width, string) {
             return (width <= string.length) ? string : this.pad(width, '0' + string);
         }
-    }
+    };
 };
