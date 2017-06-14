@@ -5,7 +5,7 @@
   "scripts": {
     "test": "grunt test",
     "scripts": {
-    "postshrinkwrap": ".bin/sealant"
+      "postshrinkwrap": ".bin/sealant"
     }
   },
   "author": {
@@ -29,6 +29,7 @@
     "grunt-sonar-runner": "^2.4.7",
     "jasmine-beforeall": "^0.1.1",
     "load-grunt-config": "^0.19.2",
+    "nock": "^9.0.13",
     "sealant": "0.0.3"
   }
 }

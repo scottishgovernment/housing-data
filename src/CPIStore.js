@@ -14,7 +14,6 @@ class CPIStore {
 
     latest(callback) {
         const url = this.couchUrl + 'ons/_design/ons/_view/cpi?limit=1&include_docs=true&descending=true';
-
         request(url, (error, response, body) => {
             if (error) {
                 callback(error);
@@ -24,8 +23,8 @@ class CPIStore {
             var parsedBody = JSON.parse(body);
             if (parsedBody.total_rows > 0) {
                 var doc = parsedBody.rows[0].doc;
-                 delete doc['_id'];
-                 delete doc['_rev'];
+                delete doc['_id'];
+                delete doc['_rev'];
                 callback(undefined, doc);
             } else {
                 callback(null, null);

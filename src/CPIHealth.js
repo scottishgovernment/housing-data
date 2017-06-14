@@ -20,13 +20,7 @@ class CPIHealth {
             const releaseDateTodayOrBefore = this.dateUtils.compareWithNow(cpi.releaseDate) >= 0;
             const nextReleaseInFuture = this.dateUtils.compareWithNow(cpi.nextRelease) < 0;
             const ok = releaseDateTodayOrBefore && nextReleaseInFuture;
-
-            console.log(cpi.releaseDate, cpi.nextRelease);
-            console.log(releaseDateTodayOrBefore, nextReleaseInFuture);
-
-        console.log(ok);
             const status = ok ? 200 : 503;
-            console.log(status);
             const message = 'releaseDate: ' + cpi.releaseDate
                             + ', nextRelease: ' + cpi.nextRelease;
             res.status(status);
