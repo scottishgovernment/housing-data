@@ -15,12 +15,14 @@ class CPIStore {
     latest(callback) {
         const url = this.couchUrl + 'ons/_design/ons/_view/cpi?limit=1&include_docs=true&descending=true';
         request(url, (error, response, body) => {
-            if (error) {
+            console.log(url, error);
+            if (error) {                
                 callback(error);
                 return;
             }
 
             var parsedBody = JSON.parse(body);
+            console.log('QQQQQQQ');
             if (parsedBody.total_rows > 0) {
                 var doc = parsedBody.rows[0].doc;
                 delete doc['_id'];
@@ -34,6 +36,7 @@ class CPIStore {
 
     store(cpi, callback) {
         const url = this.couchUrl + 'ons/_design/ons/_view/cpi?key="' + cpi.releaseDate + '"';
+        console.log(url);
         request(url, (error, response, body) => {
             if (error) {
                 callback(error);
@@ -41,6 +44,7 @@ class CPIStore {
             }
 
             var parsedBody = JSON.parse(body);
+            console.log(parsedBody);
             if (parsedBody.total_rows > 0) {
                 // dont need to store this document as it already exists
                 callback();
