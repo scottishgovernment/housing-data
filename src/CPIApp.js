@@ -24,7 +24,7 @@ class CPIApp {
         });
 
         expressApp.get('/health', (req, res) => {
-            this.healthchecker(source, res);
+            this.healthchecker.health(this.source, res);
         });
     }
 }
