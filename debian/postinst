@@ -1,11 +1,26 @@
 #!/bin/sh
-# postinst script for ons-importer
+# postinst script for housing-data
 #
 # see: dh_installdeb(1)
 
 set -e
 
 configure() {
+  # Set-up housing-data user
+  adduser \
+     --quiet \
+     --system \
+     --home /opt/housing-data \
+     --no-create-home \
+     --shell /bin/bash \
+     --group \
+     --gecos "Housing-data" \
+     housing-data
+
+  mkdir -p /var/log/housing-data
+  chmod 755 /var/log/housing-data
+  chown housing-data:housing-data /var/log/housing-data
+
   . /etc/profile
   cd /opt/housing-data/couch
   couchdb-push http://localhost:5984/ons . \
