@@ -9,5 +9,5 @@ chdir /opt/housing-data
 
 script
     . /etc/profile
-    exec ./src/run.js >> /var/log/housing-data/housing-data.log 2>&1
+    exec node src/run.js >> /var/log/housing-data/housing-data.log 2>&1
 end script
