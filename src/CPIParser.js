@@ -24,9 +24,9 @@ class CPIParser {
                 const field = row[0];
                 var value = row[1];
                 if (monthlyPattern.test(field)) {
-                    var timeParts = field.split(' ');
-                    var year = parseInt(timeParts[0], 10);
-                    var month = monthIndex(timeParts[1]);
+                    var parsedDate = new Date(field);
+                    var year = parsedDate.getFullYear();
+                    var month = parsedDate.getMonth() + 1;
 
                     cpiData.data.push({
                         year: year,
@@ -78,21 +78,6 @@ function validateCPIData(cpi) {
         validationErrors.push('No data');
     }
     return validationErrors;
-}
-
-function monthIndex(monthStr) {
-    var monthNames = [
-        'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
-        'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
-    ];
-
-    var index = monthNames.indexOf(monthStr);
-    if (index === -1) {
-        throw 'Unrecognised Month name: ' + monthStr;
-    }
-
-    // make the date 1 based
-    return index + 1;
 }
 
 function convertReleaseDate(input) {
