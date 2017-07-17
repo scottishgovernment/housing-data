@@ -3,8 +3,6 @@
 /**
  * Parser for the CPI data from ONS.
  **/
-const dateUtils = require('./dateUtils')();
-
 class CPIParser {
 
     parse(inputStream, callback) {
@@ -99,15 +97,24 @@ function monthIndex(monthStr) {
 
 function convertReleaseDate(input) {
     // format used in the csv file for release date: 16-05-2017
-    const format = 'dd/mm/yyyy';
-    var parts = input.match(/(\d+)/g),  i = 0, fmt = {};
-    // extract date-part indexes from the format
-    format.replace(/(yyyy|dd|mm)/g, function(part) { fmt[part] = i++; });
-    return [parts[fmt['yyyy']], parts[fmt['mm']], parts[fmt['dd']]].join('-');
+    var match = input.match(/(\d{1,2})-(\d{1,2})-(\d{4})/);
+    return formatDate(match[3], match[2], match[1]);
 }
 
 function convertNextReleaseDate(input) {
-    return dateUtils.dateString(new Date(input));
+    var date = new Date(input);
+    return formatDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
+}
+
+function formatDate(year, month, day) {
+  function pad(number, width) {
+      var string = number.toString();
+      return '0'.repeat(width - string.length) + string;
+  }
+  return require('util').format('%s-%s-%s',
+      pad(year, 4),
+      pad(month, 2),
+      pad(day, 2));
 }
 
 module.exports = CPIParser;

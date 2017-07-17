@@ -16,7 +16,7 @@ describe('CPIParser', function() {
           expect(cpiData.cdid).toBe('D7BT');
           expect(cpiData.datasetId).toBe('MM23');
           expect(cpiData.releaseDate).toBe('2017-05-16');
-          expect(cpiData.nextRelease).toBe('2017-06-12');
+          expect(cpiData.nextRelease).toBe('2017-06-13');
 
           // the first and last rows are as expected
           expect(cpiData.data[0].year).toBe(1988);
