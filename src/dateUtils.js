@@ -6,16 +6,23 @@ module.exports =  function (dateSource) {
     // this enables tests to override the syustem date
     if (!dateSource) {
         dateSource = {
-            date: () => new Date()
+            date: function () {
+                var now = new Date();
+
+                now.setMinutes(0);
+                now.setSeconds(0);
+                now.setMilliseconds(0);
+                return now;
+            }
         };
     }
 
     return {
         dateString: function (d) {
             return [
-                d.getUTCFullYear(),
-                this.pad(2, '' + (d.getUTCMonth() + 1)),
-                this.pad(2, '' + d.getUTCDate())
+                d.getFullYear(),
+                this.pad(2, '' + (d.getMonth() + 1)),
+                this.pad(2, '' + d.getDate())
             ].join('-');
         },
 
@@ -25,6 +32,9 @@ module.exports =  function (dateSource) {
         compareWithNow: function (dateStr) {
             const now = dateSource.date();
             const nowDate = this.dateString(now);
+            console.log('compareWithNow');
+            console.log('now:', now);
+            console.log('nowDate:', nowDate);
             return nowDate.localeCompare(dateStr);
         },
 

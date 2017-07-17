@@ -29,5 +29,19 @@ describe('datUtils', function() {
         expect(sut.compareWithNow(sut.dateString(tomorrow, sut))).toBe(-1);
     });
 
+    it('compare with now within hour of midnight', function () {
+        var sut = require('../target/src/dateUtils.js')();
+        var millisInDay = 1000 * 60 * 60 * 24;
+        var today = new Date();
+        today.setHours(0);
+        today.setMinutes(10);
+        today.setSeconds(0);
+        var yesterday = new Date(today.getTime() - millisInDay);
+        var tomorrow = new Date(today.getTime() + millisInDay);
+        expect(sut.compareWithNow(sut.dateString(yesterday))).toBe(1);
+        expect(sut.compareWithNow(sut.dateString(today, sut))).toBe(0);
+        expect(sut.compareWithNow(sut.dateString(tomorrow, sut))).toBe(-1);
+    });
+
 
 });
