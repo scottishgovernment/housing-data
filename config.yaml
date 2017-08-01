@@ -1,5 +1,5 @@
 application:
-  name: housing-data
+  name: housingdata
 
 cpi:
   graceperiod: PT12H
