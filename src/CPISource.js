@@ -44,13 +44,12 @@ class CPISource {
                     } else {
                         console.log('CPISource.  CPI data in store is up to date.');
 
-                        // index the new data
-                        this.indexer.indexData((indexErr) => {
-                            if (indexErr !== undefined) {
-                                console.log('CPISource. Failed to index data:', indexErr);
-                            }
-                            callback(null, cpi);
+                        // tell the indexer that the data has been updated.
+                        this.indexer.update(() => {
+                            console.log('CPISource.  Updated elasticsearch.');
                         });
+
+                        callback(null, cpi);
                     }
                 });
             });

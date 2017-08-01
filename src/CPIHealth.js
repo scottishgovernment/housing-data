@@ -44,10 +44,9 @@ class CPIHealth {
             const elasticsearchClient = new this.elasticsearch.Client(esConfig);
             elasticsearchClient.cat.health((esError, esHealth) => {
                 var messages = [];
-                messages.push(esHealth);
                 if (esError) {
                     ok = false;
-                    messages.push('Unable to contact elasticsearch:', esError);
+                    messages.push('Unable to contact elasticsearch:' + esError.message || esError);
                 } else {
                     // parse the health info
                     const parts = esHealth.split(' ');

@@ -155,7 +155,7 @@ describe('CPISource', function() {
 
     function anyIndexer() {
         return {
-            indexData(callback) {
+            update(callback) {
                 callback(undefined);
             }
         }

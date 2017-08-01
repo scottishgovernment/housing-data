@@ -23,12 +23,14 @@ class HousingDataService {
         const elasticsearch = require('elasticsearch');
         const elasticsearchConfig = config.elasticsearch;
         const RetryingCPIUpdater = require('./RetryingCPIUpdater');
+        const RetryingCPIIndexer = require('./RetryingCPIIndexer');
         const CPIUpdateScheduler = require('./CPIUpdateScheduler');
 
         const store = new CPIStore(config.couch.url);
         const onsSource = new URLCPISource(config.cpi.source.url);
         const indexer = new CPIIndexer(elasticsearch, elasticsearchConfig, store);
-        const source = new CPISource(onsSource, store, indexer);
+        const retryingIndexer = new RetryingCPIIndexer(indexer, config.cpi.update.retryinterval);
+        const source = new CPISource(onsSource, store, retryingIndexer);
         const health = new CPIHealth(config.cpi.graceperiod, elasticsearch, elasticsearchConfig);
 
         const schedule = require('node-schedule');
