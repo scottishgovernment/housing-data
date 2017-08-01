@@ -22,8 +22,7 @@
     "fast-csv": "^2.4.0",
     "node-schedule": "^1.2.3",
     "prettycron": "^0.10.0",
-    "request": "^2.81.0",
-    "sealant": "0.0.3"
+    "request": "^2.81.0"
   },
   "devDependencies": {
     "grunt": "^1.0.1",
