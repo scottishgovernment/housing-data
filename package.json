@@ -1,6 +1,6 @@
 {
   "name": "ons-importer",
-  "version": "0.0.0",
+  "version": "1.0.12",
   "description": "Imports CPI data from ONS into CouchDB",
   "scripts": {
     "test": "grunt test",
