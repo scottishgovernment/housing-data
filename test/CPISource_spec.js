@@ -7,7 +7,7 @@ describe('CPISource', function() {
         // ARRANGE
         const source = undefined;
         const store = fakeStore('Error from latest', undefined);
-        const sut = new CPISource(source, store);
+        const sut = new CPISource(source, store, anyIndexer());
 
         // ACT
         sut.get((error, data) => {
@@ -24,7 +24,7 @@ describe('CPISource', function() {
         const dataFromSource = { nextRelease: '2017-01-01'};
         const source = fakeSource(dataFromSource);
         const store = fakeStore(undefined, { nextRelease: '2015-01-01'}, "Error from store", undefined);
-        const sut = new CPISource(source, store);
+        const sut = new CPISource(source, store, anyIndexer());
 
         // ACT
         sut.get((error, data) => {
@@ -40,7 +40,7 @@ describe('CPISource', function() {
         // ARRANGE
         const source = erroringSource('Error from source');
         const store = fakeStore(undefined, { nextRelease: '2015-01-01'}, "Error from store", undefined);
-        const sut = new CPISource(source, store);
+        const sut = new CPISource(source, store, anyIndexer());
 
         // ACT
         sut.get((error, data) => {
@@ -57,7 +57,7 @@ describe('CPISource', function() {
         const dataFromSource = { nextRelease: '2017-01-01'};
         const source = fakeSource(dataFromSource);
         const store = fakeStore(null, undefined, null, undefined);
-        const sut = new CPISource(source, store);
+        const sut = new CPISource(source, store, anyIndexer());
 
         // ACT
         sut.get((error, data) => {
@@ -75,7 +75,7 @@ describe('CPISource', function() {
         const source = fakeSource(dataFromSource);
         const dataFromStore = { nextRelease: '2017-01-01'};
         const store = fakeStore(null, dataFromStore, null, undefined);
-        const sut = new CPISource(source, store);
+        const sut = new CPISource(source, store, anyIndexer());
 
         // ACT
         sut.get((error, data) => {
@@ -96,7 +96,7 @@ describe('CPISource', function() {
         const dateSource = {
             date: () => new Date(2017, 01, 01, 12, 0, 0, 0)
         };
-        const sut = new CPISource(source, store, dateSource);
+        const sut = new CPISource(source, store, anyIndexer(), dateSource);
 
         // ACT
         sut.get((error, data) => {
@@ -114,7 +114,7 @@ describe('CPISource', function() {
         const source = fakeSource(dataFromSource);
         const dataFromStore = { nextRelease: '2018-01-01'};
         const store = fakeStore(null, dataFromStore, null, undefined);
-        const sut = new CPISource(source, store);
+        const sut = new CPISource(source, store, anyIndexer());
 
         // ACT
         sut.get((error, data) => {
@@ -149,6 +149,14 @@ describe('CPISource', function() {
         return {
             get: function (callback) {
                 callback(error);
+            }
+        }
+    }
+
+    function anyIndexer() {
+        return {
+            indexData(callback) {
+                callback(undefined);
             }
         }
     }

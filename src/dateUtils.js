@@ -8,16 +8,14 @@ module.exports =  function (dateSource) {
         dateSource = {
             date: function () {
                 var now = new Date();
-
-                now.setMinutes(0);
-                now.setSeconds(0);
-                now.setMilliseconds(0);
                 return now;
             }
         };
     }
 
     return {
+        dateSource: dateSource,
+
         dateString: function (d) {
             return [
                 d.getFullYear(),
@@ -27,14 +25,11 @@ module.exports =  function (dateSource) {
         },
 
         /**
-         * compare a date string of the format 2012-12-30 wiuth the current date.
+         * compare a date string of the format 2012-12-30 with the current date.
          **/
         compareWithNow: function (dateStr) {
             const now = dateSource.date();
             const nowDate = this.dateString(now);
-            console.log('compareWithNow');
-            console.log('now:', now);
-            console.log('nowDate:', nowDate);
             return nowDate.localeCompare(dateStr);
         },
 

@@ -3,11 +3,11 @@
 /**
  * Express app that defines endpoints for the CPI data service.
  */
-
 class CPIApp {
 
-    constructor(source, healthchecker) {
+    constructor(source, store, healthchecker) {
         this.source = source;
+        this.store = store;
         this.healthchecker = healthchecker;
     }
 
@@ -23,7 +23,7 @@ class CPIApp {
         });
 
         expressApp.get('/health', (req, res) => {
-            this.healthchecker.health(this.source, res);
+            this.healthchecker.health(this.store, res);
         });
     }
 }

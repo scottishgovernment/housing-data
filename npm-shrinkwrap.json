@@ -13,6 +13,11 @@
       "from": "accepts@>=1.3.3 <1.4.0",
       "resolved": "https://registry.npmjs.org/accepts/-/accepts-1.3.3.tgz"
     },
+    "agentkeepalive": {
+      "version": "2.2.0",
+      "from": "agentkeepalive@>=2.2.0 <3.0.0",
+      "resolved": "https://registry.npmjs.org/agentkeepalive/-/agentkeepalive-2.2.0.tgz"
+    },
     "ajv": {
       "version": "4.11.8",
       "from": "ajv@>=4.9.1 <5.0.0",
@@ -33,14 +38,12 @@
     "ansi-regex": {
       "version": "2.1.1",
       "from": "ansi-regex@>=2.0.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/ansi-regex/-/ansi-regex-2.1.1.tgz",
-      "dev": true
+      "resolved": "https://registry.npmjs.org/ansi-regex/-/ansi-regex-2.1.1.tgz"
     },
     "ansi-styles": {
       "version": "2.2.1",
       "from": "ansi-styles@>=2.2.1 <3.0.0",
-      "resolved": "https://registry.npmjs.org/ansi-styles/-/ansi-styles-2.2.1.tgz",
-      "dev": true
+      "resolved": "https://registry.npmjs.org/ansi-styles/-/ansi-styles-2.2.1.tgz"
     },
     "argparse": {
       "version": "1.0.9",
@@ -191,8 +194,7 @@
     "chalk": {
       "version": "1.1.3",
       "from": "chalk@>=1.1.1 <1.2.0",
-      "resolved": "https://registry.npmjs.org/chalk/-/chalk-1.1.3.tgz",
-      "dev": true
+      "resolved": "https://registry.npmjs.org/chalk/-/chalk-1.1.3.tgz"
     },
     "cliui": {
       "version": "2.1.0",
@@ -263,6 +265,11 @@
       "from": "cookie-signature@1.0.6",
       "resolved": "https://registry.npmjs.org/cookie-signature/-/cookie-signature-1.0.6.tgz"
     },
+    "cron-parser": {
+      "version": "2.4.1",
+      "from": "cron-parser@>=2.4.0 <3.0.0",
+      "resolved": "http://repo.digital.gov.uk/content/groups/npm-all/cron-parser/-/cron-parser-2.4.1.tgz"
+    },
     "cryptiles": {
       "version": "2.0.5",
       "from": "cryptiles@>=2.0.0 <3.0.0",
@@ -297,6 +304,11 @@
           "resolved": "https://registry.npmjs.org/assert-plus/-/assert-plus-1.0.0.tgz"
         }
       }
+    },
+    "date-duration": {
+      "version": "1.0.1",
+      "from": "date-duration@latest",
+      "resolved": "https://registry.npmjs.org/date-duration/-/date-duration-1.0.1.tgz"
     },
     "date-extended": {
       "version": "0.0.6",
@@ -351,6 +363,11 @@
       "resolved": "https://registry.npmjs.org/deep-is/-/deep-is-0.1.3.tgz",
       "dev": true
     },
+    "define-properties": {
+      "version": "1.1.2",
+      "from": "define-properties@>=1.1.1 <2.0.0",
+      "resolved": "http://repo.digital.gov.uk/content/groups/npm-all/define-properties/-/define-properties-1.1.2.tgz"
+    },
     "delayed-stream": {
       "version": "1.0.0",
       "from": "delayed-stream@>=1.0.0 <1.1.0",
@@ -389,6 +406,18 @@
       "from": "ee-first@1.1.1",
       "resolved": "https://registry.npmjs.org/ee-first/-/ee-first-1.1.1.tgz"
     },
+    "elasticsearch": {
+      "version": "13.2.0",
+      "from": "elasticsearch@latest",
+      "resolved": "https://registry.npmjs.org/elasticsearch/-/elasticsearch-13.2.0.tgz",
+      "dependencies": {
+        "lodash": {
+          "version": "2.4.2",
+          "from": "lodash@2.4.2",
+          "resolved": "https://registry.npmjs.org/lodash/-/lodash-2.4.2.tgz"
+        }
+      }
+    },
     "encodeurl": {
       "version": "1.0.1",
       "from": "encodeurl@>=1.0.1 <1.1.0",
@@ -408,8 +437,7 @@
     "escape-string-regexp": {
       "version": "1.0.5",
       "from": "escape-string-regexp@>=1.0.2 <2.0.0",
-      "resolved": "https://registry.npmjs.org/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz",
-      "dev": true
+      "resolved": "https://registry.npmjs.org/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz"
     },
     "escodegen": {
       "version": "1.8.1",
@@ -559,6 +587,11 @@
           "dev": true
         }
       }
+    },
+    "foreach": {
+      "version": "2.0.5",
+      "from": "foreach@>=2.0.5 <3.0.0",
+      "resolved": "http://repo.digital.gov.uk/content/groups/npm-all/foreach/-/foreach-2.0.5.tgz"
     },
     "forever-agent": {
       "version": "0.6.1",
@@ -780,8 +813,7 @@
     "has-ansi": {
       "version": "2.0.0",
       "from": "has-ansi@>=2.0.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/has-ansi/-/has-ansi-2.0.0.tgz",
-      "dev": true
+      "resolved": "https://registry.npmjs.org/has-ansi/-/has-ansi-2.0.0.tgz"
     },
     "has-flag": {
       "version": "1.0.0",
@@ -883,6 +915,11 @@
       "from": "is-finite@>=1.0.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/is-finite/-/is-finite-1.0.2.tgz",
       "dev": true
+    },
+    "is-nan": {
+      "version": "1.2.1",
+      "from": "is-nan@>=1.2.1 <2.0.0",
+      "resolved": "http://repo.digital.gov.uk/content/groups/npm-all/is-nan/-/is-nan-1.2.1.tgz"
     },
     "is-typedarray": {
       "version": "1.0.0",
@@ -1039,6 +1076,11 @@
       "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-3.2.2.tgz",
       "dev": true
     },
+    "later": {
+      "version": "1.2.0",
+      "from": "later@>=1.1.6 <2.0.0",
+      "resolved": "http://repo.digital.gov.uk/content/groups/npm-all/later/-/later-1.2.0.tgz"
+    },
     "lazy-cache": {
       "version": "1.0.4",
       "from": "lazy-cache@>=1.0.3 <2.0.0",
@@ -1095,6 +1137,26 @@
       "from": "lodash@>=3.10.1 <3.11.0",
       "resolved": "https://registry.npmjs.org/lodash/-/lodash-3.10.1.tgz",
       "dev": true
+    },
+    "lodash.get": {
+      "version": "4.4.2",
+      "from": "lodash.get@>=4.4.2 <5.0.0",
+      "resolved": "https://registry.npmjs.org/lodash.get/-/lodash.get-4.4.2.tgz"
+    },
+    "lodash.isempty": {
+      "version": "4.4.0",
+      "from": "lodash.isempty@>=4.4.0 <5.0.0",
+      "resolved": "https://registry.npmjs.org/lodash.isempty/-/lodash.isempty-4.4.0.tgz"
+    },
+    "lodash.trimend": {
+      "version": "4.5.1",
+      "from": "lodash.trimend@>=4.5.1 <5.0.0",
+      "resolved": "https://registry.npmjs.org/lodash.trimend/-/lodash.trimend-4.5.1.tgz"
+    },
+    "long-timeout": {
+      "version": "0.1.1",
+      "from": "long-timeout@0.1.1",
+      "resolved": "http://repo.digital.gov.uk/content/groups/npm-all/long-timeout/-/long-timeout-0.1.1.tgz"
     },
     "longest": {
       "version": "1.0.1",
@@ -1182,6 +1244,16 @@
         }
       }
     },
+    "moment": {
+      "version": "2.18.1",
+      "from": "moment@>=2.9.0",
+      "resolved": "http://repo.digital.gov.uk/content/groups/npm-all/moment/-/moment-2.18.1.tgz"
+    },
+    "moment-timezone": {
+      "version": "0.5.13",
+      "from": "moment-timezone@>=0.5.0 <0.6.0",
+      "resolved": "http://repo.digital.gov.uk/content/groups/npm-all/moment-timezone/-/moment-timezone-0.5.13.tgz"
+    },
     "ms": {
       "version": "2.0.0",
       "from": "ms@2.0.0",
@@ -1211,6 +1283,11 @@
           "dev": true
         }
       }
+    },
+    "node-schedule": {
+      "version": "1.2.3",
+      "from": "node-schedule@latest",
+      "resolved": "http://repo.digital.gov.uk/content/groups/npm-all/node-schedule/-/node-schedule-1.2.3.tgz"
     },
     "nopt": {
       "version": "3.0.6",
@@ -1251,6 +1328,11 @@
       "version": "0.0.7",
       "from": "object-extended@0.0.7",
       "resolved": "https://registry.npmjs.org/object-extended/-/object-extended-0.0.7.tgz"
+    },
+    "object-keys": {
+      "version": "1.0.11",
+      "from": "object-keys@>=1.0.8 <2.0.0",
+      "resolved": "http://repo.digital.gov.uk/content/groups/npm-all/object-keys/-/object-keys-1.0.11.tgz"
     },
     "on-finished": {
       "version": "2.3.0",
@@ -1357,6 +1439,11 @@
       "from": "prelude-ls@>=1.1.2 <1.2.0",
       "resolved": "https://registry.npmjs.org/prelude-ls/-/prelude-ls-1.1.2.tgz",
       "dev": true
+    },
+    "prettycron": {
+      "version": "0.10.0",
+      "from": "prettycron@latest",
+      "resolved": "http://repo.digital.gov.uk/content/groups/npm-all/prettycron/-/prettycron-0.10.0.tgz"
     },
     "propagate": {
       "version": "0.4.0",
@@ -1518,6 +1605,11 @@
       "from": "sntp@>=1.0.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/sntp/-/sntp-1.0.9.tgz"
     },
+    "sorted-array-functions": {
+      "version": "1.0.0",
+      "from": "sorted-array-functions@>=1.0.0 <2.0.0",
+      "resolved": "http://repo.digital.gov.uk/content/groups/npm-all/sorted-array-functions/-/sorted-array-functions-1.0.0.tgz"
+    },
     "source-map": {
       "version": "0.2.0",
       "from": "source-map@>=0.2.0 <0.3.0",
@@ -1578,8 +1670,7 @@
     "strip-ansi": {
       "version": "3.0.1",
       "from": "strip-ansi@>=3.0.0 <4.0.0",
-      "resolved": "https://registry.npmjs.org/strip-ansi/-/strip-ansi-3.0.1.tgz",
-      "dev": true
+      "resolved": "https://registry.npmjs.org/strip-ansi/-/strip-ansi-3.0.1.tgz"
     },
     "strip-bom": {
       "version": "2.0.0",
@@ -1596,8 +1687,7 @@
     "supports-color": {
       "version": "2.0.0",
       "from": "supports-color@>=2.0.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/supports-color/-/supports-color-2.0.0.tgz",
-      "dev": true
+      "resolved": "https://registry.npmjs.org/supports-color/-/supports-color-2.0.0.tgz"
     },
     "tough-cookie": {
       "version": "2.3.2",

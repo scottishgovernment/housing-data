@@ -9,5 +9,10 @@ chdir /opt/housing-data
 
 script
     . /etc/profile
-    exec node src/run.js >> /var/log/housing-data/housing-data.log 2>&1
+
+    if [ -x /usr/local/bin/am-i-live ] && ! /usr/local/bin/am-i-live; then
+      exit
+    el
+      exec node src/run.js >> /var/log/housing-data/housing-data.log 2>&1
+    fi
 end script

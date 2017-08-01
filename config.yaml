@@ -1,6 +1,17 @@
 application:
-    name: housing-data
-ons:
-    cpiUrl: https://www.ons.gov.uk/generator?format=csv&uri=/economy/inflationandpriceindices/timeseries/d7bt/mm23
+  name: housing-data
+
+cpi:
+  graceperiod: PT12H
+  source:
+    url: https://www.ons.gov.uk/generator?format=csv&uri=/economy/inflationandpriceindices/timeseries/d7bt/mm23
+  update:
+    crontab: '0 * * * *'
+    retryinterval: 10000
+
 couch:
-    url: http://localhost:5984/
+  url: http://localhost:5984/
+
+elasticsearch:
+  host: localhost:9200
+  log: warning

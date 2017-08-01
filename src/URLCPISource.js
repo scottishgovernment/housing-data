@@ -14,8 +14,8 @@ class URLCPISource {
     }
 
     get(callback) {
+        console.log('--->get ', this.url);
         var stream = request.get(this.url);
-        console.log('Fetching from ', this.url);
         this.parser.parse(stream, (error, cpi) => callback(null, cpi));
     }
 }

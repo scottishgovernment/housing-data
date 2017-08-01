@@ -63,7 +63,7 @@ module.exports = function(grunt) {
 
         instrument: {
             files: [
-                'src/*.js',
+                'src/**/*.js',
             ],
             options: {
                 lazy: true,
