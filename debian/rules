@@ -22,7 +22,7 @@ override_dh_install:
 	sed "s@$$PWD/node_modules/@@" | \
 	  sort \
 	  > target/deps-prod.txt
-	comm -23 target/deps-all.txt target/deps-prod.txt > target/deps-test.txt
+	comm -23 out/deps-all.txt out/deps-prod.txt | sed 's@^@/@' > out/deps-test.txt
 	mkdir -p debian/$(PKG)/opt/housing-data
 	rsync -a \
 	  --delete \
