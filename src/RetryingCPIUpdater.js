@@ -7,9 +7,10 @@ const request = require('request');
 
 class RetryingCPIUpdater {
 
-    constructor(source, retryinterval) {
+    constructor(source, amILiveCheck, retryinterval) {
         this.source = source;
         this.retryinterval = retryinterval;
+        this.amILiveCheck = amILiveCheck;
         this.running = false;
     }
 
@@ -17,16 +18,30 @@ class RetryingCPIUpdater {
         this.running = true;
 
         var sourceCallback = (err) => {
-            if (err) {
-                console.log('RetryingCPIUpdater. Failed to update data:', err);
-                console.log('RetryingCPIUpdater. Retrying in ', this.retryinterval);
-                setTimeout(() => this.source.get(sourceCallback), this.retryinterval);
+            if (!err) {
+                this.running = false;
+                callback();
                 return;
             }
-            this.running = false;
-            callback();
+
+            console.log('RetryingCPIUpdater. Failed to update data:', err);
+            console.log('RetryingCPIUpdater. Retrying in ', this.retryinterval);
+            setTimeout(() => this.updateIfLive(sourceCallback), this.retryinterval);
         };
-        this.source.get(sourceCallback);
+
+        // only if this is the live leg
+        this.updateIfLive(sourceCallback);
+    }
+
+    updateIfLive(callback) {
+        this.amILiveCheck.check((error, live) => {
+            if (!live) {
+                console.log('RetryingCPIUpdater. This is not the live leg.');
+                callback();
+                return;
+            }
+            this.source.get(callback);
+        });
     }
 
     isRunning() {

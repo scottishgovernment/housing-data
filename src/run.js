@@ -9,11 +9,12 @@
 const path = require('path');
 const fs = require('fs');
 const banner = fs.readFileSync(path.join(__dirname, 'banner.txt')).toString();
-console.log(banner);
 
 const configWeaver = require('config-weaver');
 const config = configWeaver.config();
-configWeaver.showVars(config, config.application.name);
+console.log('Started at', new Date().toString());
+console.log(banner);
+configWeaver.showVars(config, ' ' + config.application.name);
 process.title = config.application.name;
 
 var HousingDataService = require('./HousingDataService');

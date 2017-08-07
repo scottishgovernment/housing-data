@@ -22,6 +22,7 @@ class HousingDataService {
         const CPIIndexer = require('./CPIIndexer');
         const elasticsearch = require('elasticsearch');
         const elasticsearchConfig = config.elasticsearch;
+        const AmILiveCheck = require('./AmILiveCheck');
         const RetryingCPIUpdater = require('./RetryingCPIUpdater');
         const RetryingCPIIndexer = require('./RetryingCPIIndexer');
         const CPIUpdateScheduler = require('./CPIUpdateScheduler');
@@ -32,10 +33,11 @@ class HousingDataService {
         const retryingIndexer = new RetryingCPIIndexer(indexer, config.cpi.update.retryinterval);
         const source = new CPISource(onsSource, store, retryingIndexer);
         const health = new CPIHealth(config.cpi.graceperiod, elasticsearch, elasticsearchConfig);
-
+        const amILiveCheck = new AmILiveCheck();
         const schedule = require('node-schedule');
+
         this.retryingUpdater =
-            new RetryingCPIUpdater(source, config.cpi.update.retryinterval);
+            new RetryingCPIUpdater(source, amILiveCheck, config.cpi.update.retryinterval);
         this.scheduler =
             new CPIUpdateScheduler(
                 this.retryingUpdater,
@@ -53,9 +55,7 @@ class HousingDataService {
         console.log('Server listening at http://%s:%s', host, port);
 
         // on startup, update the ons data, index it and then schedule regular updates.
-        this.retryingUpdater.update(() => {
-            this.scheduler.schedule();
-        });
+        this.retryingUpdater.update(() => this.scheduler.schedule());
     }
 }
 

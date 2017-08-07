@@ -6,7 +6,7 @@ describe('RetryingCPIUpdater', function() {
 
         // ARRANGE
         const source = sourceSuceedAfterFailures(2);
-        const sut = new RetryingCPIUpdater(source, 100);
+        const sut = new RetryingCPIUpdater(source, amILiveCheck(true), 100);
 
         // ACT
         sut.update(() => {
@@ -16,6 +16,39 @@ describe('RetryingCPIUpdater', function() {
             done();
         });
     });
+
+    it('does not retry if not live leg', function (done) {
+
+        // ARRANGE
+        const source = sourceSuceedAfterFailures(100);
+        const sut = new RetryingCPIUpdater(source, amILiveCheckValues([true, true, true]), 100);
+
+        // ACT
+        sut.update(() => {
+            // ASSERT
+            expect(source.getFailureCount()).toBe(3);
+            expect(sut.isRunning()).toBe(false);
+            done();
+        });
+    });
+
+    function amILiveCheck(isLive) {
+        return {
+            check: function (callback) {
+                callback(undefined, isLive);
+            }
+        }
+    }
+
+    function amILiveCheckValues(values, calls) {
+        return {
+            amILiveCalls: 0,
+
+            check: function (callback) {
+                callback(undefined, values[this.amILiveCalls++]);
+            }
+        }
+    }
 
     function sourceSuceedAfterFailures(desiredFailureCount) {
         var failureCount = 0;
