@@ -2,6 +2,9 @@
 
 const execFile = require('child_process').execFile;
 
+/**
+ * Check if the service is running on the live leg or not.
+ **/
 class AmILiveCheck {
 
     check(callback) {
