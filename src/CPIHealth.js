@@ -19,13 +19,13 @@ class CPIHealth {
         store.latest((error, cpi) => {
             if (error) {
                 res.status(500);
-                res.send({ ok:false, msg: error });
+                res.send({ ok:false, message: error });
                 return;
             }
 
             if (!cpi) {
                 res.status(500);
-                res.send({ ok:false, msg: 'No CPI data in store' });
+                res.send({ ok:false, message: 'No CPI data in store' });
                 return;
             }
 
