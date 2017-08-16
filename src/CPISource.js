@@ -26,7 +26,7 @@ class CPISource {
             }
 
             // if we have cached cpi data and it is not out of date then return that
-            if (cachedCPI && this.dateUtils.compareWithNow(cachedCPI.nextRelease) < 0) {
+            if (cachedCPI && !this.dateUtils.hasDatePassed(cachedCPI.nextRelease)) {
                 console.log('CPISource.  CPI data is up to date.');
                 callback(null, cachedCPI);
                 return;
@@ -38,6 +38,7 @@ class CPISource {
                     callback(sourceError);
                     return;
                 }
+
                 this.store.store(cpi, storeError => {
                     if (storeError) {
                         callback(storeError);

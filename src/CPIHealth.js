@@ -1,6 +1,6 @@
 'use strict';
 
-var duration = require('date-duration');
+var moment = require('moment');
 
 /**
  * Health check logic.
@@ -30,12 +30,14 @@ class CPIHealth {
             }
 
             var ok = true;
+            var messages = [];
 
             // decide if the data is out of date or not
-            var nextReleaseDate = Date.parse(cpi.nextRelease);
-            var lastAcceptableDate = duration.default(this.gracePeriod).addTo(nextReleaseDate);
-            let now = this.dateSource.date();
-            if (now > lastAcceptableDate) {
+            var lastAcceptableDate = moment(cpi.nextRelease)
+                                        .add(moment.duration(this.gracePeriod));
+
+            if (lastAcceptableDate.isBefore(this.dateSource.date())) {
+                messages.push('Next release date has passed. Grace period: ' + this.gracePeriod);
                 ok = false;
             }
 
@@ -43,7 +45,7 @@ class CPIHealth {
             var esConfig = Object.assign({}, this.elasticsearchConfig);
             const elasticsearchClient = new this.elasticsearch.Client(esConfig);
             elasticsearchClient.cat.health((esError, esHealth) => {
-                var messages = [];
+
                 if (esError) {
                     ok = false;
                     messages.push('Unable to contact elasticsearch:' + esError.message || esError);
@@ -62,7 +64,7 @@ class CPIHealth {
                 res.status(status);
                 res.send({
                     ok: ok,
-                    messages: messages
+                    message: messages ? messages.join('; ') : ''
                 });
 
             });

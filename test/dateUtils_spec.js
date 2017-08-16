@@ -18,30 +18,14 @@ describe('datUtils', function() {
         expect(sut.dateString(d2)).toBe('2010-03-10');
     });
 
-    it('compare to now with system date source', function () {
+    it('has date passed system date source', function () {
         var sut = require('../target/src/dateUtils.js')();
         var millisInDay = 1000 * 60 * 60 * 24;
         var today = new Date();
         var yesterday = new Date(today.getTime() - millisInDay);
         var tomorrow = new Date(today.getTime() + millisInDay);
-        expect(sut.compareWithNow(sut.dateString(yesterday))).toBe(1);
-        expect(sut.compareWithNow(sut.dateString(today, sut))).toBe(0);
-        expect(sut.compareWithNow(sut.dateString(tomorrow, sut))).toBe(-1);
+        expect(sut.hasDatePassed("2010-01-01")).toBe(true);
+        expect(sut.hasDatePassed("2050-01-01")).toBe(false);
     });
-
-    it('compare with now within hour of midnight', function () {
-        var sut = require('../target/src/dateUtils.js')();
-        var millisInDay = 1000 * 60 * 60 * 24;
-        var today = new Date();
-        today.setHours(0);
-        today.setMinutes(10);
-        today.setSeconds(0);
-        var yesterday = new Date(today.getTime() - millisInDay);
-        var tomorrow = new Date(today.getTime() + millisInDay);
-        expect(sut.compareWithNow(sut.dateString(yesterday))).toBe(1);
-        expect(sut.compareWithNow(sut.dateString(today, sut))).toBe(0);
-        expect(sut.compareWithNow(sut.dateString(tomorrow, sut))).toBe(-1);
-    });
-
 
 });

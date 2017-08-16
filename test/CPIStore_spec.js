@@ -36,7 +36,6 @@ describe('CPIStore', function() {
         });
     });
 
-
     it('error from latest', function (done) {
 
         // ARRANGE

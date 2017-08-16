@@ -123,7 +123,7 @@ describe('CPIHealth', function() {
         const store = dateOfNextReleaseDateStore();
         const elasticsearch = healthyElasticsearch();
         const dateSource = {
-            date: () => new Date(2017, 5, 20, 13, 0, 0, 0)// note that the month is zero based
+            date: () => new Date(2017, 5, 20, 12, 1, 0, 0)// note that the month is zero based
         }
         const sut = new CPIHealth('PT12H', elasticsearch, {}, dateSource);
         var status;
@@ -131,8 +131,8 @@ describe('CPIHealth', function() {
             status: s => status = s,
             send: json => {
                 // ASSERT
-                expect(json.ok).toBe(true);
-                expect(status).toBe(200);
+                expect(json.ok).toBe(false);
+                expect(status).toBe(503);
                 done();
             }
         };

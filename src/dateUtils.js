@@ -1,5 +1,7 @@
 'use strict';
 
+const moment = require('moment');
+
 module.exports =  function (dateSource) {
 
     // if no date source is sepcified then use system data timeParts
@@ -27,10 +29,9 @@ module.exports =  function (dateSource) {
         /**
          * compare a date string of the format 2012-12-30 with the current date.
          **/
-        compareWithNow: function (dateStr) {
+        hasDatePassed: function (dateStr) {
             const now = dateSource.date();
-            const nowDate = this.dateString(now);
-            return nowDate.localeCompare(dateStr);
+            return moment(dateStr).isBefore(now);
         },
 
         pad: function (width, string) {

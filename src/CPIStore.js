@@ -35,13 +35,13 @@ class CPIStore {
     store(cpi, callback) {
         const url = this.couchUrl + 'ons/_design/ons/_view/cpi?key="' + cpi.releaseDate + '"';
         request(url, (error, response, body) => {
-            if (error) {
+            if (error || response.statusCode !== 200) {
                 callback(error);
                 return;
             }
 
             var parsedBody = JSON.parse(body);
-            if (parsedBody.total_rows > 0) {
+            if (parsedBody.rows.length > 0) {
                 // dont need to store this document as it already exists
                 callback();
                 return;
@@ -62,7 +62,6 @@ function postToCouch(store, cpi, callback) {
         },
         json: cpi
     };
-
     request(options, (error, response, body) => callback(error, body));
 }
 

@@ -13,13 +13,15 @@
     "email": "martin.ellis@gov.scot",
     "url": "http://inside.mygovscot.org/"
   },
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "config-weaver": "0.0.15",
     "date-duration": "^1.0.1",
     "elasticsearch": "^12.1.3",
     "express": "^4.15.3",
     "fast-csv": "^2.4.0",
+    "moment": "http://repo.digital.gov.uk/content/groups/npm-all/moment/-/moment-2.18.1.tgz",
+    "nano": "^6.4.0",
     "node-schedule": "^1.2.3",
     "prettycron": "^0.10.0",
     "request": "^2.81.0"
