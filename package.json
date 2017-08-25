@@ -20,7 +20,7 @@
     "elasticsearch": "^12.1.3",
     "express": "^4.15.3",
     "fast-csv": "^2.4.0",
-    "moment": "http://repo.digital.gov.uk/content/groups/npm-all/moment/-/moment-2.18.1.tgz",
+    "moment": "^2.18.1",
     "nano": "^6.4.0",
     "node-schedule": "^1.2.3",
     "prettycron": "^0.10.0",
