@@ -1,0 +1,44 @@
+{
+    "mappings": {
+      "rpz": {
+        "properties": {
+          "_rev": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "fromDate": {
+            "type": "date"
+          },
+          "id": {
+            "type": "text"
+          },
+          "maxIncrease": {
+            "type": "float"
+          },
+          "name": {
+            "type": "text"
+          },
+          "postcodes": {
+            "type": "keyword"
+          },
+          "uprns": {
+            "type": "keyword"
+          },
+          "timestamp": {
+            "type": "long"
+          },
+          "toDate": {
+            "type": "date"
+          },
+          "username": {
+            "type": "text"
+          }
+        }
+      }
+    }
+}

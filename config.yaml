@@ -9,8 +9,18 @@ cpi:
     crontab: '0 * * * *'
     retryinterval: 10000
 
+rpz:
+  index:
+    crontab: '*/5 * * * *'
+    retryinterval: 10000
+
 couch:
   url: http://localhost:5984/
+
+mapcloud:
+    url: 'https://api.themapcloud.com/'
+    user: 'osma_scottishgovernment'
+    password: 'Im9zbWFfc2NvdHRpc2hnb3Zlcm5tZW50Ig.C8ANOQ.6slIkjefnELHXUnAp4MwHT-723s'
 
 elasticsearch:
   host: localhost:9200
