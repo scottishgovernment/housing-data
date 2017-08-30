@@ -16,7 +16,6 @@ class RetryingCPIUpdater {
 
     update(callback) {
         this.running = true;
-
         var sourceCallback = (err) => {
             if (!err) {
                 this.running = false;

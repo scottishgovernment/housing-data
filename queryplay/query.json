@@ -1,0 +1,45 @@
+{
+   "query":{
+      "bool":{
+         "must":{
+            "match_all":{}
+         },
+         "filter":{
+            "bool":{
+               "must":[
+                  {
+                     "range":{
+                        "fromDate":{
+                           "lte":"2010-02-01"
+                        }
+                     }
+                  },
+                  {
+                     "range":{
+                        "toDate":{
+                           "gte":"2010-02-01"
+                        }
+                     }
+                  },
+                  {
+                     "bool":{
+                        "should":[
+                           {
+                              "term":{
+                                 "postcodes":"EH10 4AX"
+                              }
+                           },
+                           {
+                              "term":{
+                                 "uprns":"906169837"
+                              }
+                           }
+                        ]
+                     }
+                  }
+               ]
+            }
+         }
+      }
+   }
+}

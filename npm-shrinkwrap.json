@@ -98,6 +98,18 @@
     "bluebird": {
       "version": "2.11.0"
     },
+    "body-parser": {
+      "version": "1.17.2",
+      "from": "body-parser@latest",
+      "resolved": "http://repo.digital.gov.uk/repository/npm-all/body-parser/-/body-parser-1.17.2.tgz",
+      "dependencies": {
+        "iconv-lite": {
+          "version": "0.4.15",
+          "from": "iconv-lite@0.4.15",
+          "resolved": "http://repo.digital.gov.uk/repository/npm-all/iconv-lite/-/iconv-lite-0.4.15.tgz"
+        }
+      }
+    },
     "boom": {
       "version": "2.10.1"
     },
@@ -111,6 +123,11 @@
     "builtin-modules": {
       "version": "1.1.1",
       "dev": true
+    },
+    "bytes": {
+      "version": "2.4.0",
+      "from": "bytes@2.4.0",
+      "resolved": "http://repo.digital.gov.uk/repository/npm-all/bytes/-/bytes-2.4.0.tgz"
     },
     "camelcase": {
       "version": "2.1.1",
@@ -1057,6 +1074,18 @@
     },
     "range-parser": {
       "version": "1.2.0"
+    },
+    "raw-body": {
+      "version": "2.2.0",
+      "from": "raw-body@>=2.2.0 <2.3.0",
+      "resolved": "http://repo.digital.gov.uk/repository/npm-all/raw-body/-/raw-body-2.2.0.tgz",
+      "dependencies": {
+        "iconv-lite": {
+          "version": "0.4.15",
+          "from": "iconv-lite@0.4.15",
+          "resolved": "http://repo.digital.gov.uk/repository/npm-all/iconv-lite/-/iconv-lite-0.4.15.tgz"
+        }
+      }
     },
     "read-pkg": {
       "version": "1.1.0",

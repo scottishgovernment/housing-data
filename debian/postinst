@@ -25,6 +25,10 @@ configure() {
   cd /opt/housing-data/couch
   couchdb-push http://localhost:5984/ons . \
     > /var/log/housing-data/couchdb-push.log
+
+  cd /opt/housing-data/couch-rpz
+  couchdb-push http://localhost:5984/rpz . \
+    > /var/log/housing-data/couchdb-rpz-push.log
 }
 
 case "$1" in

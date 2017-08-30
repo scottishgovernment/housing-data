@@ -5,9 +5,8 @@
  */
 class CPIApp {
 
-    constructor(source, store, healthchecker) {
+    constructor(source, healthchecker) {
         this.source = source;
-        this.store = store;
         this.healthchecker = healthchecker;
     }
 
@@ -23,7 +22,7 @@ class CPIApp {
         });
 
         expressApp.get('/health', (req, res) => {
-            this.healthchecker.health(this.store, res);
+            this.healthchecker.health(res);
         });
     }
 }
