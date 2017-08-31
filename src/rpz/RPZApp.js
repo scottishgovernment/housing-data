@@ -5,11 +5,21 @@
  */
 class RPZApp {
 
-    constructor(service) {
+    constructor(service, indexer) {
         this.service = service;
+        this.indexer = indexer;
     }
 
     register(expressApp) {
+        expressApp.get('/rpz/index', (req, res) => {
+            this.indexer.index((error, data) => {
+                if (error) {
+                    res.status(500).send(error);
+                } else {
+                    res.json(data);
+                }
+            });
+        });
 
         expressApp.get('/rpz', (req, res) => {
             this.service.listDetail((error, zones) => {

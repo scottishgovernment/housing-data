@@ -14,10 +14,10 @@ class RetryingRPZIndexer {
     index(callback) {
         this.running = true;
 
-        var indexerCallback = (err) => {
+        var indexerCallback = (err, data) => {
             if (!err) {
                 this.running = false;
-                callback();
+                callback(err, data);
                 return;
             }
 

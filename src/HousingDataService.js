@@ -24,7 +24,7 @@ class HousingDataService {
         const HousingScheduler = require('./HousingScheduler');
         const CPIStore = require('./CPIStore');
         const CPISource = require('./CPISource');
-        const HousingHealth = require('./CPIHealth');
+        const HousingHealth = require('./HousingHealth');
         const CPIApp = require('./CPIApp');
         const CPIIndexer = require('./CPIIndexer');
         const URLCPISource = require('./URLCPISource');
@@ -70,7 +70,7 @@ class HousingDataService {
         const cpiApp = new CPIApp(source, health);
         cpiApp.register(expressApp);
 
-        const rpzApp = new RPZApp(rpzService);
+        const rpzApp = new RPZApp(rpzService, this.retryingRPZIndexer);
         rpzApp.register(expressApp);
     }
 

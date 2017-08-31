@@ -44,7 +44,7 @@ class RPZIndexer {
 
             if (toDelete.length + toInsert.length + toUpdate.length === 0) {
                 console.log('RPZIndexer. No updates needed.');
-                callback();
+                callback(undefined, 'No updates needed');
             } else {
                 performUpdates(esClient, toDelete, toInsert, toUpdate, callback);
             }
