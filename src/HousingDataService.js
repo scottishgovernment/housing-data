@@ -56,7 +56,7 @@ class HousingDataService {
         const source = new CPISource(onsSource, store, retryingIndexer);
 
         const health = new CPIHealth(
-            rpzDB, config.mapcloud, store, config.cpi.graceperiod,
+            rpzDB, mapcloud, store, config.cpi.graceperiod,
             elasticsearch, config.elasticsearch);
 
         this.retryingUpdater =

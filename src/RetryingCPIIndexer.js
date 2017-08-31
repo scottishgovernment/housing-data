@@ -15,7 +15,7 @@ class RetryingCPIIndexer {
 
     update(callback) {
         this.running = true;
-
+console.log('RetryingCPIIndexer!!!!');
         var indexerCallback = (err) => {
             if (err) {
                 console.log('RetryingCPIIndexer. Failed to index data:', err);

@@ -3,9 +3,11 @@
 /**
 
 TODO:
-    healthcheck ... couch health
-
     api tests
+
+    CPI Updater does not work in the case where there is no data in ES and
+    up to date cpi datae
+
 **/
 
 /**
@@ -96,6 +98,7 @@ class RPZService {
      * Create a rent pressure zone.
      **/
     create(rpz, username, callback) {
+        rpz.postcodes = rpz.postcodes.map(pc => pc.toUpperCase());
         this.validate(undefined, rpz, (errors) => {
             if (errors.length > 0) {
                 callback(errors);
@@ -104,6 +107,7 @@ class RPZService {
             rpz.username = username;
             rpz.timestamp = Date.now();
             rpz.history = [];
+
             this.rpzDB.insert(rpz, callback);
         });
     }
@@ -112,6 +116,7 @@ class RPZService {
      * Update a rent pressure zone
      **/
     update(id, rpz, username, callback) {
+        rpz.postcodes = rpz.postcodes.map(pc => pc.toUpperCase());
         this.validate(id, rpz, (errors) => {
             if (errors.length > 0) {
                 callback(errors);
@@ -127,6 +132,15 @@ class RPZService {
     validate(id, rpz, callback) {
         var errors = [];
         validateDates(rpz, errors);
+
+        // must specify at least one uprn or postcodesForUprns
+        if (rpz.postcodes.length + rpz.uprns.length === 0) {
+            errors.push({
+                field: 'postcodes',
+                message: 'Must specify at least one Postcode or UPRN'
+            });
+        }
+
         if (errors.length > 0) {
             callback(errors);
             return;
@@ -216,6 +230,7 @@ function fetchValidationData(rpz, service, callback) {
             const postcodesForUprns = results[0];
             const uprnsForPostcodes = results[1];
             const existing = results[2];
+
             callback(undefined, postcodesForUprns, uprnsForPostcodes, existing);
         });
 }

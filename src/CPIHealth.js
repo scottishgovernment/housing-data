@@ -10,7 +10,7 @@ class CPIHealth {
 
     constructor(
             rpzDB,
-            mapclopudConfig,
+            mapcloud,
             cpiStore,
             gracePeriod,
             elasticsearch,
@@ -18,121 +18,117 @@ class CPIHealth {
             dateSource) {
 
         this.rpzDB = rpzDB;
-        this.mapclopudConfig = mapclopudConfig;
+        this.mapcloud = mapcloud;
         this.cpiStore = cpiStore;
         this.gracePeriod = gracePeriod;
         this.elasticsearch = elasticsearch;
         this.elasticsearchConfig = elasticsearchConfig;
         this.dateSource = require('./dateUtils')(dateSource).dateSource;
-
     }
 
     health(res) {
         async.parallel([
-                cb => checkRPZDesignDocHealth(nano, cb),
-                cb => checkMapcloudHealth(mapcloudConfig, cb),
-                cb => checkCPIDataHealth(store, gracePeriod, cb),
-                cb => checkElasticsearchHealth(elasticsearch, elasticsearchConfig, cb)
-            ],
-            (err, results) => {
-                // ok if all the results are ok
-                const ok = results.reduce((acc, result) => acc && result.ok);
-
-                // combine all pf the messages into one array.
-                var messages = [];
-                results.forEach(result => Array.prototype.push.apply(messages, result.messages));
-
-                const status = ok ? 200 : 503;
-                res.status(status);
-                res.send({
-                    ok: ok,
-                    message: messages ? messages.join('; ') : ''
-                });
+            cb => checkRPZDesignDocHealth(this.rpzDB, cb),
+            cb => checkMapcloudHealth(this.mapcloud, cb),
+            cb => checkCPIDataHealth(this.cpiStore, this.gracePeriod, this.dateSource, cb),
+            cb => checkElasticsearchHealth(this.elasticsearch, this.elasticsearchConfig, cb)
+        ],
+        (err, results) => {
+            var ok = true;
+            var messages = [];
+            results.forEach(result => {
+                ok = ok && result.ok;
+                Array.prototype.push.apply(messages, result.messages);
             });
+
+            const status = ok ? 200 : 503;
+            res.status(status);
+            res.send({
+                ok: ok,
+                message: messages ? messages.join('; ') : ''
+            });
+        });
     }
 }
 
-function checkRPZDesignDocHealth(nano, callback) {
-    callback(undefined, {
-        ok: true,
-        message: undefined
+function checkRPZDesignDocHealth(rpzDB, callback) {
+    rpzDB.head('_design/rpz', err => {
+        if (err) {
+            callback(undefined, {
+                ok: false,
+                messages: ['failed to get rpz design doc']
+            });
+        } else {
+            callback(undefined, { ok: true, messages: [] });
+        }
     });
 }
 
-function checkMapcloudHealth(mapcloudConfig, callback) {
-    callback(undefined, {
-        ok: true,
-        message: undefined
+function checkMapcloudHealth(mapcloud, callback) {
+    // lookup the uprn for VQ
+    mapcloud.postcodeForUprn('906423149', err => {
+        if (err) {
+            callback(undefined, {
+                ok: false,
+                messages: [err]
+            });
+        } else {
+            callback(undefined, { ok: true, messages: [] });
+        }
     });
 }
 
 
-function checkCPIDataHealth(cpiStore, gracePeriod, callback) {
+function checkCPIDataHealth(cpiStore, gracePeriod, dateSource, callback) {
 
-    // store.latest((error, cpi) => {
-    //     if (error) {
-    //         res.status(500);
-    //         res.send({ ok:false, message: error });
-    //         return;
-    //     }
-    //
-    //     if (!cpi) {
-    //         res.status(500);
-    //         res.send({ ok:false, message: 'No CPI data in store' });
-    //         return;
-    //     }
-    //
-    //     var ok = true;
-    //     var messages = [];
-    //
-    //     // decide if the data is out of date or not
-    //     var lastAcceptableDate = moment(cpi.nextRelease)
-    //                                 .add(moment.duration(this.gracePeriod));
-    //
-    //     if (lastAcceptableDate.isBefore(this.dateSource.date())) {
-    //         messages.push('Next release date has passed. Grace period: ' + this.gracePeriod);
-    //         ok = false;
-    //     }
-    callback(undefined, {
-        ok: true,
-        message: undefined
+    cpiStore.latest((error, cpi) => {
+        if (error) {
+            callback(undefined, { ok:false, messages: [error] });
+            return;
+        }
+
+        if (!cpi) {
+            callback(undefined, { ok:false, messages: ['No CPI data in store'] });
+            return;
+        }
+
+        var ok = true;
+        var messages = [];
+        messages.push('releaseDate: ' + cpi.releaseDate);
+        messages.push('nextRelease: ' + cpi.nextRelease);
+
+        // decide if the data is out of date or not
+        var lastAcceptableDate = moment(cpi.nextRelease)
+                                    .add(moment.duration(gracePeriod));
+        if (lastAcceptableDate.isBefore(dateSource.date())) {
+            messages.push('Next release date has passed. Grace period: ' + gracePeriod);
+            ok = false;
+        }
+
+        callback(undefined, { ok: ok, messages: [] });
     });
 }
 
 function checkElasticsearchHealth(elasticsearch, elasticsearchConfig, callback) {
-//
-//     // check the elasticsearch health
-//     var esConfig = Object.assign({}, this.elasticsearchConfig);
-//     const elasticsearchClient = new this.elasticsearch.Client(esConfig);
-//     elasticsearchClient.cat.health((esError, esHealth) => {
-//
-//         if (esError) {
-//             ok = false;
-//             messages.push('Unable to contact elasticsearch:' + esError.message || esError);
-//         } else {
-//             // parse the health info
-//             const parts = esHealth.split(' ');
-//             if (parts.length < 4 || (parts[3] !== 'green' && parts[3] !== 'yellow')) {
-//                 ok = false;
-//             }
-//         }
-//
-//         const status = ok ? 200 : 503;
-//         messages.push('releaseDate: ' + cpi.releaseDate);
-//         messages.push('nextRelease: ' + cpi.nextRelease);
-//
-//         res.status(status);
-//         res.send({
-//             ok: ok,
-//             message: messages ? messages.join('; ') : ''
-//         });
-//
-//     });
-// });
 
-    callback(undefined, {
-        ok: true,
-        message: undefined
+    var messages = [];
+    var ok = true;
+
+    // check the elasticsearch health
+    var esConfig = Object.assign({}, elasticsearchConfig);
+    const elasticsearchClient = new elasticsearch.Client(esConfig);
+    elasticsearchClient.cat.health((esError, esHealth) => {
+        if (esError) {
+            ok = false;
+            messages.push('Unable to contact elasticsearch:' + esError.message || esError);
+        } else {
+            // parse the health info
+            const parts = esHealth.split(' ');
+            if (parts.length < 4 || (parts[3] !== 'green' && parts[3] !== 'yellow')) {
+                ok = false;
+            }
+        }
+        callback(undefined, { ok: ok, messages: messages });
     });
 }
 

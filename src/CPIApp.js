@@ -5,7 +5,7 @@
  */
 class CPIApp {
 
-    constructor(source, store, healthchecker) {
+    constructor(source, healthchecker) {
         this.source = source;
         this.healthchecker = healthchecker;
     }

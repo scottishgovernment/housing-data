@@ -23,7 +23,7 @@ class RetryingRPZIndexer {
 
             console.log('RetryingRPZIndexer. Failed to index data:', err);
             console.log('RetryingRPZIndexer. Retrying in ', this.retryinterval);
-            setTimeout(() => this.updateIfLive(sourceCallback), this.retryinterval);
+            setTimeout(() => this.updateIfLive(indexerCallback), this.retryinterval);
         };
 
         // only if this is the live leg

@@ -201,13 +201,26 @@ describe('RPZService', function() {
         });
     });
 
+    it('no postcodes or uprns returns error', function (done) {
+        // ARRANGE
+        const sut = new RPZService(dbWithRpzs([]));
+        const rpz = rpzWithPostcodes('two', []);
+        const username = 'username';
+
+        // ACT
+        sut.create(rpz, username, (err, rpzOut) => {
+            expect(err[0].field).toBe('postcodes');
+            done();
+        });
+    });
+
     it('create returns error if unable to fetch validation data', function (done) {
         // ARRANGE
         const sut = new RPZService(dbWithRpzs([]), errorMapcloud('mapclouderror'));
 
         // ACT
         sut.create(rpzWithId('1'), 'username', (err) => {
-            expect(err).toEqual('mapclouderror');
+            expect(err).toEqual(['mapclouderror']);
             done();
         });
     });
