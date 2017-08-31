@@ -92,7 +92,6 @@ function ensureIndexExists(esClient, callback) {
                 },
 
                 (createErr) => {
-                    console.log('Create index:', createErr);
                     callback(createErr);
                 });
         });
