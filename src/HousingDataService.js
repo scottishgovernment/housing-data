@@ -22,16 +22,14 @@ class HousingDataService {
     constructor(config) {
         const AmILiveCheck = require('./AmILiveCheck');
         const HousingScheduler = require('./HousingScheduler');
-
         const CPIStore = require('./CPIStore');
         const CPISource = require('./CPISource');
-        const CPIHealth = require('./CPIHealth');
+        const HousingHealth = require('./CPIHealth');
         const CPIApp = require('./CPIApp');
         const CPIIndexer = require('./CPIIndexer');
         const URLCPISource = require('./URLCPISource');
         const RetryingCPIUpdater = require('./RetryingCPIUpdater');
         const RetryingCPIIndexer = require('./RetryingCPIIndexer');
-
         const Mapcloud = require('./rpz/Mapcloud.js');
         const RPZApp = require('./rpz/RPZApp');
         const RPZService = require('./rpz/RPZService');
@@ -55,7 +53,7 @@ class HousingDataService {
         const retryingIndexer = new RetryingCPIIndexer(indexer, config.cpi.update.retryinterval);
         const source = new CPISource(onsSource, store, retryingIndexer);
 
-        const health = new CPIHealth(
+        const health = new HousingHealth(
             rpzDB, mapcloud, store, config.cpi.graceperiod,
             elasticsearch, config.elasticsearch);
 

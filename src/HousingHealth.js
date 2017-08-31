@@ -6,7 +6,7 @@ var async = require('async');
 /**
  * Health check logic.
  **/
-class CPIHealth {
+class HousingHealth {
 
     constructor(
             rpzDB,
@@ -132,4 +132,4 @@ function checkElasticsearchHealth(elasticsearch, elasticsearchConfig, callback) 
     });
 }
 
-module.exports = CPIHealth;
+module.exports = HousingHealth;

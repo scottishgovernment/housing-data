@@ -1,16 +1,6 @@
 'use strict';
 
 /**
-
-TODO:
-    api tests
-
-    CPI Updater does not work in the case where there is no data in ES and
-    up to date cpi datae
-
-**/
-
-/**
  * RPZService backed by couchdb.
  **/
 const async = require('async');

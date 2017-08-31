@@ -1,15 +1,15 @@
 'use strict';
 
-var CPIHealth = require('../target/src/CPIHealth.js');
+var HousingHealth = require('../target/src/HousingHealth.js');
 
-describe('CPIHealth', function() {
+describe('HousingHealth', function() {
 
     it('greenpath returns expected json', function (done) {
         // ARRANGE
         const dateSource = {
            date: () => new Date(2017, 5, 20, 12, 0, 0, 0)
        };
-        const sut = new CPIHealth(healthyRPZDB(), healthyMapcloud(),
+        const sut = new HousingHealth(healthyRPZDB(), healthyMapcloud(),
             greenPathStore(), 'PT12H', healthyElasticsearch(), {}, dateSource);
         var status;
         var res = {
@@ -29,7 +29,7 @@ describe('CPIHealth', function() {
     it('error from source returns expected json', function (done) {
 
         // ARRANGE
-        const sut = new CPIHealth(healthyRPZDB(), healthyMapcloud(),
+        const sut = new HousingHealth(healthyRPZDB(), healthyMapcloud(),
             errorStore(), 'PT12H', healthyElasticsearch(), {});
         var status;
         var res = {
@@ -49,7 +49,7 @@ describe('CPIHealth', function() {
     it('no data in store returns expected json', function (done) {
 
         // ARRANGE
-        const sut = new CPIHealth(healthyRPZDB(), healthyMapcloud(),
+        const sut = new HousingHealth(healthyRPZDB(), healthyMapcloud(),
             noDataStore(), 'PT12H', healthyElasticsearch(), {});
         var status;
         var res = {
@@ -72,7 +72,7 @@ describe('CPIHealth', function() {
         const dateSource = {
             date: () => new Date(2017, 6, 20, 12, 0, 0, 0)
         }
-        const sut = new CPIHealth(healthyRPZDB(), healthyMapcloud(),
+        const sut = new HousingHealth(healthyRPZDB(), healthyMapcloud(),
             outOfDateStore(), 'PT12H', healthyElasticsearch(), {}, dateSource);
         var status;
         var res = {
@@ -96,7 +96,7 @@ describe('CPIHealth', function() {
         const dateSource = {
             date: () => new Date(2017, 5, 20, 10, 0, 0, 0)// note that the month is zero based
         }
-        const sut = new CPIHealth(healthyRPZDB(), healthyMapcloud(),
+        const sut = new HousingHealth(healthyRPZDB(), healthyMapcloud(),
             dateOfNextReleaseDateStore(), 'PT12H', healthyElasticsearch(), {}, dateSource);
         var status;
         var res = {
@@ -119,7 +119,7 @@ describe('CPIHealth', function() {
         const dateSource = {
             date: () => new Date(2017, 5, 20, 12, 1, 0, 0)// note that the month is zero based
         }
-        const sut = new CPIHealth(healthyRPZDB(), healthyMapcloud(),
+        const sut = new HousingHealth(healthyRPZDB(), healthyMapcloud(),
             dateOfNextReleaseDateStore(), 'PT12H', healthyElasticsearch(), {}, dateSource);
         var status;
         var res = {
@@ -139,7 +139,7 @@ describe('CPIHealth', function() {
 
     it('stopped elasticsearch returns expected json', function (done) {
         // ARRANGE
-        const sut = new CPIHealth(healthyRPZDB(), healthyMapcloud(),
+        const sut = new HousingHealth(healthyRPZDB(), healthyMapcloud(),
             greenPathStore(), 'PT12H', stoppedElasticsearch(), {});
 
         var status;
@@ -159,7 +159,7 @@ describe('CPIHealth', function() {
 
     it('unhealthly elasticsearch returns expected json', function (done) {
         // ARRANGE
-        const sut = new CPIHealth(healthyRPZDB(), healthyMapcloud(),
+        const sut = new HousingHealth(healthyRPZDB(), healthyMapcloud(),
             greenPathStore(), 'PT12H', unhealthlyElasticsearch(), {});
         var status;
         var res = {
@@ -178,7 +178,7 @@ describe('CPIHealth', function() {
 
     it('badly formed elasticsearch health returns expected json', function (done) {
         // ARRANGE
-        const sut = new CPIHealth(healthyRPZDB(), healthyMapcloud(),
+        const sut = new HousingHealth(healthyRPZDB(), healthyMapcloud(),
             greenPathStore(), 'PT12H', malformedHealthElasticsearch(), {});
         var status;
         var res = {
@@ -197,7 +197,7 @@ describe('CPIHealth', function() {
 
     it('unhealthy rpzDB returns expected json', function (done) {
         // ARRANGE
-        const sut = new CPIHealth(unhealthyRPZDB(), healthyMapcloud(),
+        const sut = new HousingHealth(unhealthyRPZDB(), healthyMapcloud(),
             greenPathStore(), 'PT12H', healthyElasticsearch(), {});
         var status;
         var res = {
@@ -216,7 +216,7 @@ describe('CPIHealth', function() {
 
     it('unhealthy mapcloud returns expected json', function (done) {
         // ARRANGE
-        const sut = new CPIHealth(healthyRPZDB(), unhealthyMapcloud(),
+        const sut = new HousingHealth(healthyRPZDB(), unhealthyMapcloud(),
             greenPathStore(), 'PT12H', healthyElasticsearch(), {});
         var status;
         var res = {
