@@ -40,7 +40,8 @@ class HousingDataService {
 
         const amILiveCheck = new AmILiveCheck();
         const mapcloud = new Mapcloud(config.mapcloud);
-        const rpzService = new RPZService(nano.use('rpz'), mapcloud);
+        const rpzDB = nano.use('rpz');
+        const rpzService = new RPZService(rpzDB, mapcloud);
         const rpzIndexer = new RPZIndexer(rpzService, elasticsearch, config.elasticsearch);
         this.retryingRPZIndexer
             = new RetryingRPZIndexer(
@@ -50,12 +51,13 @@ class HousingDataService {
 
         const store = new CPIStore(config.couch.url);
         const onsSource = new URLCPISource(config.cpi.source.url);
-        const indexer = new CPIIndexer(elasticsearch, elasticsearchConfig, store);
+        const indexer = new CPIIndexer(elasticsearch, config.elasticsearch, store);
         const retryingIndexer = new RetryingCPIIndexer(indexer, config.cpi.update.retryinterval);
         const source = new CPISource(onsSource, store, retryingIndexer);
 
-        // TODO: rename to housing health and add RPZ health code
-        const health = new CPIHealth(config.cpi.graceperiod, elasticsearch, config.elasticsearch);
+        const health = new CPIHealth(
+            rpzDB, config.mapcloud, store, config.cpi.graceperiod,
+            elasticsearch, config.elasticsearch);
 
         this.retryingUpdater =
             new RetryingCPIUpdater(source, amILiveCheck, config.cpi.update.retryinterval);
@@ -67,7 +69,7 @@ class HousingDataService {
                 config.rpz.index.crontab,
                 nodeSchedule);
 
-        const cpiApp = new CPIApp(source, store, health);
+        const cpiApp = new CPIApp(source, health);
         cpiApp.register(expressApp);
 
         const rpzApp = new RPZApp(rpzService);

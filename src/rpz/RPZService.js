@@ -3,9 +3,7 @@
 /**
 
 TODO:
-    remove mapcloud credentials from config (add to puppetry)
-
-    healthcheck ... mapcloud metrics? Can talk to couch.
+    healthcheck ... couch health
 
     api tests
 **/
@@ -165,10 +163,6 @@ class RPZService {
                         existingRpz.postcodes.forEach(pc => existingByPostcode[pc] = existingRpz);
                         existingRpz.uprns.forEach(uprn => existingByUPRN[uprn] = existingRpz);
                     });
-
-console.log('existingByPostcode', existingByPostcode);
-console.log('postcodesForUprns', postcodesForUprns);
-console.log('uprnsForPostcodes', uprnsForPostcodes);
 
                 validateNewPostcodesDoNotClash(rpz, errors, existingByPostcode, postcodesForUprns);
                 validateNewUPRNsDoNotClash(rpz, errors, existingByUPRN, uprnsForPostcodes);

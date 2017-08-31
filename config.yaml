@@ -19,8 +19,8 @@ couch:
 
 mapcloud:
     url: 'https://api.themapcloud.com/'
-    user: 'osma_scottishgovernment'
-    password: 'Im9zbWFfc2NvdHRpc2hnb3Zlcm5tZW50Ig.C8ANOQ.6slIkjefnELHXUnAp4MwHT-723s'
+    user:
+    password: 
 
 elasticsearch:
   host: localhost:9200
