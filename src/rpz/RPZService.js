@@ -209,7 +209,7 @@ function fetchValidationData(rpz, service, callback) {
         (err, results) => {
 
             if (err) {
-                callback(err);
+                callback([err]);
                 return;
             }
 

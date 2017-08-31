@@ -39,7 +39,6 @@ class Mapcloud {
         const url = this.baseUrl + 'address/addressbase/postcode?pc=' + postcode;
         mapcloudRequest(url, this.auth, (error, data) => {
             if (error) {
-                console.log(url, error);
                 callback(error);
                 return;
             }
