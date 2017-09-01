@@ -45,8 +45,7 @@ class RPZApp {
         expressApp.post('/rpz', (req, res) => {
             const rpz = req.body;
             this.service.create(rpz, username(req), (error, data) => {
-                if (error) {
-                    console.log(error);
+                if (error) 
                     res.status(400).send(error);
                 } else {
                     res.json(data.id);
