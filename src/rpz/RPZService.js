@@ -2,6 +2,11 @@
 
 /**
  * RPZService backed by couchdb.
+
+TODO :
+- name should be unique
+- add postcode validation
+
  **/
 const async = require('async');
 const moment = require('moment');
@@ -66,7 +71,6 @@ class RPZService {
      * List the non deleted rent pressure zones returning detail
      **/
     listDetail(callback) {
-
         this.rpzDB.view('rpz', 'rpz', (err, results) => {
             if (err) {
                 callback(err);
@@ -121,7 +125,15 @@ class RPZService {
 
     validate(id, rpz, callback) {
         var errors = [];
+        validateHasField(rpz, 'name', errors);
         validateDates(rpz, errors);
+        if (validateHasField(rpz, 'maxIncrease', errors) && isNaN(rpz.maxIncrease)) {
+            errors.push({
+                field: 'maxIncrease',
+                value : rpz.maxIncrease,
+                message: 'maxIncrease must be a valid number'
+            });
+        }
 
         // must specify at least one uprn or postcodesForUprns
         if (rpz.postcodes.length + rpz.uprns.length === 0) {
@@ -155,8 +167,17 @@ class RPZService {
                     .filter(res => {
                         var resFromDate = moment(res.fromDate, DATE_TIME_FORMAT);
                         var resToDate = moment(res.toDate, DATE_TIME_FORMAT);
-                        return resFromDate >= rpzFromDate && resFromDate <= rpzToDate ||
-                            resToDate <= rpzFromDate && resToDate <= rpzToDate;
+
+                        // Calulate the overlap between the two date ranges.
+                        // This is based on:
+                        // http://baodad.blogspot.co.uk/2014/06/date-range-overlap.html
+                        var overlap = Math.min(
+                            rpzToDate - rpzFromDate,
+                            rpzToDate - resFromDate,
+                            resToDate - resFromDate,
+                            resToDate - rpzFromDate
+                        );
+                        return overlap > 0;
                     })
 
                     // do not include this rpz
@@ -164,6 +185,13 @@ class RPZService {
 
                     // map them by postcode and uprn
                     .forEach(existingRpz => {
+                        if (existingRpz.name === rpz.name) {
+                            errors.push({
+                                field: 'name',
+                                value: rpz.name,
+                                message: 'Name is already used'
+                            });
+                        }
                         existingRpz.postcodes.forEach(pc => existingByPostcode[pc] = existingRpz);
                         existingRpz.uprns.forEach(uprn => existingByUPRN[uprn] = existingRpz);
                     });
@@ -175,23 +203,40 @@ class RPZService {
     }
 }
 
-function validateDates(rpz, errors) {
-    const parsedFromDate = moment(rpz.fromDate, DATE_TIME_FORMAT);
-    if (!parsedFromDate.isValid()) {
+function validateHasField(rpz, field, errors) {
+    if (!rpz[field] || rpz[field] === '') {
         errors.push({
-            field: 'fromDate',
-            value: rpz.fromDate,
-            message: 'Invalid from date'
+            field: field,
+            message: 'Required field: ' + field
         });
+        return false;
     }
 
-    const parsedToDate = moment(rpz.toDate, DATE_TIME_FORMAT);
-    if (!parsedToDate.isValid()) {
-        errors.push({
-            field: 'toDate',
-            value: rpz.toDate,
-            message: 'Invalid to date'
-        });
+    return true;
+}
+
+function validateDates(rpz, errors) {
+
+    if (validateHasField(rpz, 'fromDate', errors)) {
+        const parsedFromDate = moment(rpz.fromDate, DATE_TIME_FORMAT);
+        if (!parsedFromDate.isValid()) {
+            errors.push({
+                field: 'fromDate',
+                value: rpz.fromDate,
+                message: 'Invalid from date'
+            });
+        }
+    }
+
+    if (validateHasField(rpz, 'toDate', errors)) {
+        const parsedToDate = moment(rpz.toDate, DATE_TIME_FORMAT);
+        if (!parsedToDate.isValid()) {
+            errors.push({
+                field: 'toDate',
+                value: rpz.toDate,
+                message: 'Invalid to date'
+            });
+        }
     }
 }
 

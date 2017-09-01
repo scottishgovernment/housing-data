@@ -46,7 +46,8 @@ class RPZApp {
             const rpz = req.body;
             this.service.create(rpz, username(req), (error, data) => {
                 if (error) {
-                    res.status(500).send(error);
+                    console.log(error);
+                    res.status(400).send(error);
                 } else {
                     res.json(data.id);
                 }
@@ -58,7 +59,7 @@ class RPZApp {
             const rpz = req.body;
             this.service.update(id, rpz, username(req), (error, result) => {
                 if (error) {
-                    res.status(500).send(error);
+                    res.status(400).send(error);
                 } else {
                     res.json(result);
                 }

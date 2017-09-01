@@ -295,7 +295,7 @@ describe('RPZService', function() {
 
         // ACT
         sut.create(rpz, username, (err, rpzOut) => {
-            expect(err[0].field).toBe('uprn');
+            expect(err).toBe(undefined);
             done();
         });
     });
