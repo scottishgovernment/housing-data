@@ -28,6 +28,7 @@ class HousingScheduler {
                 ' Next run: ', prettyCron.getNext(this.rpzIndexerCrontab));
 
         this.scheduler.scheduleJob(this.cpiUpdaterCrontab, () => {
+            console.log('---1 in job1 ');
             const nextUpdate = prettyCron.getNext(this.cpiUpdaterCrontab);
             if (this.cpiUpdater.isRunning()) {
                 console.log('HousingScheduler. CPI update job is already running. Next run: ', nextUpdate);
@@ -39,6 +40,7 @@ class HousingScheduler {
         });
 
         this.scheduler.scheduleJob(this.rpzIndexerCrontab, () => {
+            console.log('---2 in job2 ');
             const nextUpdate = prettyCron.getNext(this.rpzIndexerCrontab);
             this.rpzIndexer.index(
                 () => console.log('HousingScheduler. Finished RPZ index job. Next run: ', nextUpdate)
