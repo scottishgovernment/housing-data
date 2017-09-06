@@ -7,29 +7,64 @@ describe('HousingScheduler', function() {
 
         // ARRANGE
         var scheduler = mockscheduler();
+        var updater = {
+                isRunning : function () { return false },
+                update: function (cb) {
+                    cb();
+                }
+        };
+        var rpzIndexer = {
+                index: function (cb) { cb(); }
+        };
+
         const sut = new HousingScheduler(
-                            {}, 'tab1',
-                            {}, 'tab2',
+                            updater, 'updatertab',
+                            rpzIndexer, 'rpzindexertab',
                             scheduler);
 
         // ACT
         sut.schedule();
-
-        // ASSERT
-        expect(scheduler.tabs[0]).toBe('tab1');
-        expect(scheduler.tabs[1]).toBe('tab2');
+        scheduler.jobs.forEach(job => {
+            job();
+        });
     });
 
-function mockscheduler() {
-    return {
-        tabs: [],
-        jobs: [],
+    it('schedules as expected, updater already running', function () {
 
-        scheduleJob : function(tab, job) {
-            this.tabs.push(tab);
-            this.jobs.push(job);
+        // ARRANGE
+        var scheduler = mockscheduler();
+        var updater = {
+                isRunning : function () { return true },
+                update: function (cb) {
+                    cb();
+                }
+        };
+        var rpzIndexer = {
+                index: function (cb) { cb(); }
+        };
+
+        const sut = new HousingScheduler(
+                            updater, 'updatertab',
+                            rpzIndexer, 'rpzindexertab',
+                            scheduler);
+
+        // ACT
+        sut.schedule();
+        scheduler.jobs.forEach(job => {
+            job();
+        });
+    });
+
+    function mockscheduler() {
+        return {
+            tabs: [],
+            jobs: [],
+
+            scheduleJob : function(tab, job) {
+                this.tabs.push(tab);
+                this.jobs.push(job);
+            }
         }
     }
-}
 
 });
