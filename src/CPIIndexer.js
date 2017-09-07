@@ -65,7 +65,11 @@ function fetchDataFromElasticsearch(elasticsearch, elasticsearchConfig, callback
     const doc = elasticsearchData();
     elasticsearchClient.get(doc, (error, response) => {
         if (error) {
-            console.log('CPIIndexer: Failed to get CPI data from elasticsearch: ', error, response);
+            if (error.statusCode === 404) {
+                console.log('CPIIndexer: No CPI data in elasticsearch (got 404)');
+            } else {
+                console.log('CPIIndexer: Failed to get CPI data from elasticsearch: ', response, error);
+            }
             callback(error, undefined);
             return;
         }
