@@ -2,4 +2,5 @@ node_modules            /opt/housing-data
 src                     /opt/housing-data
 bin                     /opt/housing-data
 couch                   /opt/housing-data
+couch-rpz               /opt/housing-data
 config.yaml             /opt/housing-data
