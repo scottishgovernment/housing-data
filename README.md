@@ -107,4 +107,8 @@ Delete a rent pressure zone.
 * `rpz.index.crontab`
   * The crontab used to schedule regular updates of the rpz data from couchdb to elastcisearch
   * Type: string
-  * Default: '*\5 * * * *
+  * Default: *\5 * * * *
+
+* `elasticsearch.logLevel`
+  * Log level for elastic search library.  
+  * Default: warning

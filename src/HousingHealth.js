@@ -13,16 +13,14 @@ class HousingHealth {
             mapcloud,
             cpiStore,
             gracePeriod,
-            elasticsearch,
-            elasticsearchConfig,
+            elasticsearchClient,
             dateSource) {
 
         this.rpzDB = rpzDB;
         this.mapcloud = mapcloud;
         this.cpiStore = cpiStore;
         this.gracePeriod = gracePeriod;
-        this.elasticsearch = elasticsearch;
-        this.elasticsearchConfig = elasticsearchConfig;
+        this.elasticsearchClient = elasticsearchClient;
         this.dateSource = require('./dateUtils')(dateSource).dateSource;
     }
 
@@ -31,7 +29,7 @@ class HousingHealth {
             cb => checkRPZDesignDocHealth(this.rpzDB, cb),
             cb => checkMapcloudHealth(this.mapcloud, cb),
             cb => checkCPIDataHealth(this.cpiStore, this.gracePeriod, this.dateSource, cb),
-            cb => checkElasticsearchHealth(this.elasticsearch, this.elasticsearchConfig, cb)
+            cb => checkElasticsearchHealth(this.elasticsearchClient, cb)
         ],
         (err, results) => {
             var ok = true;
@@ -109,23 +107,26 @@ function checkCPIDataHealth(cpiStore, gracePeriod, dateSource, callback) {
     });
 }
 
-function checkElasticsearchHealth(elasticsearch, elasticsearchConfig, callback) {
+function checkElasticsearchHealth(elasticsearchClient, callback) {
 
     var messages = [];
     var ok = true;
 
     // check the elasticsearch health
-    var esConfig = Object.assign({}, elasticsearchConfig);
-    const elasticsearchClient = new elasticsearch.Client(esConfig);
-    elasticsearchClient.cat.health((esError, esHealth) => {
+    elasticsearchClient.cat.health({ format: 'json'}, (esError, esHealth) => {
         if (esError) {
             ok = false;
             messages.push('Unable to contact elasticsearch:' + esError.message || esError);
         } else {
             // parse the health info
-            const parts = esHealth.split(' ');
-            if (parts.length < 4 || (parts[3] !== 'green' && parts[3] !== 'yellow')) {
+            if (esHealth.length !== 1) {
                 ok = false;
+                messages.push('Unexpected data from elastic search health:' + JSON.stringify(esHealth));
+            } else {
+                ok = esHealth[0].status === 'green' || esHealth[0].status === 'yellow';
+                if (!ok) {
+                    messages.push('Elasticsearch health status is ' + esHealth.status);
+                }
             }
         }
         callback(undefined, { ok: ok, messages: messages });

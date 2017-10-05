@@ -8,18 +8,14 @@ const fs = require('fs');
  **/
 class RPZIndexer {
 
-    constructor(rpzService, elasticsearch, elasticsearchConfig) {
+    constructor(rpzService, elasticsearchClient) {
         this.rpzService = rpzService;
-        this.elasticsearch = elasticsearch;
-        this.elasticsearchConfig = elasticsearchConfig;
+        this.elasticsearchClient = elasticsearchClient;
     }
 
     index(callback) {
 
-        var esConfig = Object.assign({}, this.elasticsearchConfig);
-        const esClient = new this.elasticsearch.Client(esConfig);
-
-        fetchData(this.rpzService, esClient, (err, esItems, serviceItems) => {
+        fetchData(this.rpzService, this.elasticsearchClient, (err, esItems, serviceItems) => {
             if (err) {
                 callback(err);
                 return;
@@ -46,16 +42,16 @@ class RPZIndexer {
                 console.log('RPZIndexer. No updates needed.');
                 callback(undefined, 'No updates needed');
             } else {
-                performUpdates(esClient, toDelete, toInsert, toUpdate, callback);
+                performUpdates(this.elasticsearchClient, toDelete, toInsert, toUpdate, callback);
             }
         });
     }
 }
 
-function fetchData(rpzService, esClient, callback) {
+function fetchData(rpzService, elasticsearchClient, callback) {
     async.series([
-            seriesCB => ensureIndexExists(esClient, seriesCB),
-            seriesCB => fetchElasticSearchData(esClient, seriesCB),
+            seriesCB => ensureIndexExists(elasticsearchClient, seriesCB),
+            seriesCB => fetchElasticSearchData(elasticsearchClient, seriesCB),
             seriesCB => rpzService.listDetail(seriesCB)
         ],
         (err, items) => {
@@ -69,9 +65,9 @@ function fetchData(rpzService, esClient, callback) {
         });
 }
 
-function ensureIndexExists(esClient, callback) {
+function ensureIndexExists(elasticsearchClient, callback) {
 
-    esClient.indices.exists({index: 'housing-data'},
+    elasticsearchClient.indices.exists({index: 'housing-data'},
         (err, exists) => {
             if (err) {
                 callback(err);
@@ -86,7 +82,7 @@ function ensureIndexExists(esClient, callback) {
             // create the index
             const mappingFilename = __dirname + '/elasticsearchMapping.json';
             const mapping = JSON.parse(fs.readFileSync(mappingFilename));
-            esClient.indices.create({
+            elasticsearchClient.indices.create({
                     index: 'housing-data',
                     body: mapping
                 },
@@ -97,8 +93,8 @@ function ensureIndexExists(esClient, callback) {
         });
 }
 
-function fetchElasticSearchData(esClient, callback) {
-    esClient.search({
+function fetchElasticSearchData(elasticsearchClient, callback) {
+    elasticsearchClient.search({
             index: 'housing-data',
             type: 'rpz',
             size: 10000,
@@ -116,7 +112,7 @@ function fetchElasticSearchData(esClient, callback) {
     );
 }
 
-function performUpdates(esClient, toDelete, toInsert, toUpdate, callback) {
+function performUpdates(elasticsearchClient, toDelete, toInsert, toUpdate, callback) {
     // log the updates that are needed
     logIfNotEmpty('To delete:', toDelete);
     logIfNotEmpty('To insert:', toInsert);
@@ -126,7 +122,7 @@ function performUpdates(esClient, toDelete, toInsert, toUpdate, callback) {
     toInsert.forEach(item => addIndexRequests(bulkRequest, item));
     toUpdate.forEach(item => addIndexRequests(bulkRequest, item));
     toDelete.forEach(item => addDeleteRequest(bulkRequest, item));
-    esClient.bulk(bulkRequest, callback);
+    elasticsearchClient.bulk(bulkRequest, callback);
 }
 
 function logIfNotEmpty(msg, items) {

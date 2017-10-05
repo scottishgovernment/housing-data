@@ -7,7 +7,7 @@ describe('CPIIndexer', function(done) {
         // ARRANGE
         const elasticsearch = elasticsearchWithData(cpiWithReleaseDate('2010-01-01'));
         const store = storeWithData(cpiWithReleaseDate('2011-01-01'));
-        const sut = new CPIIndexer(elasticsearch, {}, store);
+        const sut = new CPIIndexer(elasticsearch, store);
 
         // ACT
         sut.indexData(() => {
@@ -23,7 +23,7 @@ describe('CPIIndexer', function(done) {
         // ARRANGE
         const elasticsearch = elasticsearchWithNoData();
         const store = storeWithData(cpiWithReleaseDate('2011-01-01'));
-        const sut = new CPIIndexer(elasticsearch, {}, store);
+        const sut = new CPIIndexer(elasticsearch, store);
 
         // ACT
         sut.indexData(() => {
@@ -39,7 +39,7 @@ describe('CPIIndexer', function(done) {
         // ARRANGE
         const elasticsearch = elasticsearchWithData(cpiWithReleaseDate('2010-01-01'));
         const store = storeWithData(cpiWithReleaseDate('2010-01-01'));
-        const sut = new CPIIndexer(elasticsearch, {}, store);
+        const sut = new CPIIndexer(elasticsearch, store);
 
         // ACT
         sut.indexData(() => {
@@ -58,7 +58,7 @@ describe('CPIIndexer', function(done) {
             msg: 'ES error'
         };
         const elasticsearch = failingGetElasticsearch(ESerr);
-        const sut = new CPIIndexer(elasticsearch, {});
+        const sut = new CPIIndexer(elasticsearch);
 
         // ACT
         sut.indexData((err) => {
@@ -75,7 +75,7 @@ describe('CPIIndexer', function(done) {
             msg: 'error'
         };
         const store = failingStore(storeErr);
-        const sut = new CPIIndexer(elasticsearch, {}, store);
+        const sut = new CPIIndexer(elasticsearch, store);
 
         // ACT
         sut.indexData((err) => {
@@ -95,7 +95,7 @@ describe('CPIIndexer', function(done) {
         };
         const elasticsearch = failingIndexElasticsearch(cpiWithReleaseDate('2010-01-01'), indexErr);
         const store = storeWithData(cpiWithReleaseDate('2011-01-01'));
-        const sut = new CPIIndexer(elasticsearch, {}, store);
+        const sut = new CPIIndexer(elasticsearch, store);
 
         // ACT
         sut.indexData((err) => {
@@ -107,41 +107,39 @@ describe('CPIIndexer', function(done) {
 
     // elasticsearch that returns expected data and remembers what go tindexes
     function elasticsearchWithData(data) {
-        var es = {
+        return {
             indexed: undefined,
 
-            Client: class Client {
-                    get(doc, callback) {
-                        callback(undefined, {
-                            _source: data
-                        });
-                    }
+            get: function (doc, callback) {
+                callback(undefined, {
+                    _source: data
+                });
+            },
 
-                    index(doc, callback) {
-                        es.indexed = doc;
-                        callback(undefined, data);
-                    }
-                }
-            };
-        return es;
+            index: function (doc, callback) {
+                this.indexed = doc;
+                callback(undefined, data);
+            }
+
+        };
     }
 
     function elasticsearchWithNoData() {
-        var es = {
+        return {
             indexed: undefined,
 
-            Client: class Client {
-                    get(doc, callback) {
-                        callback({
-                            statusCode: 404
-                        });
-                    }
 
-                    index(doc, callback) {
-                        es.indexed = doc;
-                        callback(undefined, {});
-                    }
-                }
+            get : function(doc, callback) {
+                callback({
+                    statusCode: 404
+                });
+            },
+
+            index : function(doc, callback) {
+                this.indexed = doc;
+                callback(undefined, {});
+            }
+
             };
         return es;
     }
@@ -150,27 +148,25 @@ describe('CPIIndexer', function(done) {
         return {
             indexed: undefined,
 
-            Client: class Client {
-                    get(doc, callback) {
-                        callback(err);
-                    }
-                }
+
+            get: function(doc, callback) {
+                callback(err);
+            }
+
         }
     }
 
     function failingIndexElasticsearch(getData, err) {
         return {
-            Client: class Client {
-                get(doc, callback) {
+                get: function(doc, callback) {
                     callback(undefined, {
                         _source: getData
                     });
-                }
+                },
 
-                index(doc, callback) {
+                index: function(doc, callback) {
                     callback(err, {});
                 }
-            }
         }
     }
 

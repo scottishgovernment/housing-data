@@ -10,7 +10,7 @@ describe('HousingHealth', function() {
            date: () => new Date(2017, 5, 20, 12, 0, 0, 0)
        };
         const sut = new HousingHealth(healthyRPZDB(), healthyMapcloud(),
-            greenPathStore(), 'PT12H', healthyElasticsearch(), {}, dateSource);
+            greenPathStore(), 'PT12H', healthyElasticsearch(), dateSource);
         var status;
         var res = {
             status: s => status = s,
@@ -30,7 +30,7 @@ describe('HousingHealth', function() {
 
         // ARRANGE
         const sut = new HousingHealth(healthyRPZDB(), healthyMapcloud(),
-            errorStore(), 'PT12H', healthyElasticsearch(), {});
+            errorStore(), 'PT12H', healthyElasticsearch());
         var status;
         var res = {
             status: s => status = s,
@@ -50,7 +50,7 @@ describe('HousingHealth', function() {
 
         // ARRANGE
         const sut = new HousingHealth(healthyRPZDB(), healthyMapcloud(),
-            noDataStore(), 'PT12H', healthyElasticsearch(), {});
+            noDataStore(), 'PT12H', healthyElasticsearch());
         var status;
         var res = {
             status: s => status = s,
@@ -73,7 +73,7 @@ describe('HousingHealth', function() {
             date: () => new Date(2017, 6, 20, 12, 0, 0, 0)
         }
         const sut = new HousingHealth(healthyRPZDB(), healthyMapcloud(),
-            outOfDateStore(), 'PT12H', healthyElasticsearch(), {}, dateSource);
+            outOfDateStore(), 'PT12H', healthyElasticsearch(), dateSource);
         var status;
         var res = {
             status: s => status = s,
@@ -97,7 +97,7 @@ describe('HousingHealth', function() {
             date: () => new Date(2017, 5, 20, 10, 0, 0, 0)// note that the month is zero based
         }
         const sut = new HousingHealth(healthyRPZDB(), healthyMapcloud(),
-            dateOfNextReleaseDateStore(), 'PT12H', healthyElasticsearch(), {}, dateSource);
+            dateOfNextReleaseDateStore(), 'PT12H', healthyElasticsearch(), dateSource);
         var status;
         var res = {
             status: s => status = s,
@@ -120,7 +120,7 @@ describe('HousingHealth', function() {
             date: () => new Date(2017, 5, 20, 12, 1, 0, 0)// note that the month is zero based
         }
         const sut = new HousingHealth(healthyRPZDB(), healthyMapcloud(),
-            dateOfNextReleaseDateStore(), 'PT12H', healthyElasticsearch(), {}, dateSource);
+            dateOfNextReleaseDateStore(), 'PT12H', healthyElasticsearch(), dateSource);
         var status;
         var res = {
             status: s => status = s,
@@ -140,7 +140,7 @@ describe('HousingHealth', function() {
     it('stopped elasticsearch returns expected json', function (done) {
         // ARRANGE
         const sut = new HousingHealth(healthyRPZDB(), healthyMapcloud(),
-            greenPathStore(), 'PT12H', stoppedElasticsearch(), {});
+            greenPathStore(), 'PT12H', stoppedElasticsearch());
 
         var status;
         var res = {
@@ -160,7 +160,7 @@ describe('HousingHealth', function() {
     it('unhealthly elasticsearch returns expected json', function (done) {
         // ARRANGE
         const sut = new HousingHealth(healthyRPZDB(), healthyMapcloud(),
-            greenPathStore(), 'PT12H', unhealthlyElasticsearch(), {});
+            greenPathStore(), 'PT12H', unhealthlyElasticsearch());
         var status;
         var res = {
             status: s => status = s,
@@ -179,7 +179,7 @@ describe('HousingHealth', function() {
     it('badly formed elasticsearch health returns expected json', function (done) {
         // ARRANGE
         const sut = new HousingHealth(healthyRPZDB(), healthyMapcloud(),
-            greenPathStore(), 'PT12H', malformedHealthElasticsearch(), {});
+            greenPathStore(), 'PT12H', malformedHealthElasticsearch());
         var status;
         var res = {
             status: s => status = s,
@@ -198,7 +198,7 @@ describe('HousingHealth', function() {
     it('unhealthy rpzDB returns expected json', function (done) {
         // ARRANGE
         const sut = new HousingHealth(unhealthyRPZDB(), healthyMapcloud(),
-            greenPathStore(), 'PT12H', healthyElasticsearch(), {});
+            greenPathStore(), 'PT12H', healthyElasticsearch());
         var status;
         var res = {
             status: s => status = s,
@@ -217,7 +217,7 @@ describe('HousingHealth', function() {
     it('unhealthy mapcloud returns expected json', function (done) {
         // ARRANGE
         const sut = new HousingHealth(healthyRPZDB(), unhealthyMapcloud(),
-            greenPathStore(), 'PT12H', healthyElasticsearch(), {});
+            greenPathStore(), 'PT12H', healthyElasticsearch());
         var status;
         var res = {
             status: s => status = s,
@@ -315,33 +315,23 @@ describe('HousingHealth', function() {
     }
 
     function stoppedElasticsearch() {
-        var es = {
-            Client: class Client {
-                constructor() {
-                    this.cat = {
-                        health: function (callback) {
-                            callback("error", undefined)
-                        }
-                    }
+        return {
+            cat : {
+                health: function (params, callback) {
+                    callback("error", undefined)
                 }
             }
-        };
-        return es;
+        }
     }
 
     function elasticsearchWithHealth(health) {
-        var es = {
-            Client: class Client {
-                constructor() {
-                    this.cat = {
-                        health: function (callback) {
-                            callback(undefined, "1501228724 08:58:44 govscot-lgv " + health +" 1 1 15 15 0 0 0 0 - 100.0%\n")
-                        }
-                    }
+        return {
+            cat: {
+                health: function (params, callback) {
+                    callback(undefined, [{ status : health }]);
                 }
             }
         };
-        return es;
     }
 
     function healthyElasticsearch() {
@@ -353,18 +343,12 @@ describe('HousingHealth', function() {
     }
 
     function malformedHealthElasticsearch() {
-        var es = {
-            Client: class Client {
-                constructor() {
-                    this.cat = {
-                        health: function (callback) {
-                            callback(undefined, "malformedhealth")
-                        }
-                    }
+        return {
+            cat: {
+                health: function (params, callback) {
+                    callback(undefined, "malformedhealth")
                 }
             }
         };
-        return es;
     }
-
 });

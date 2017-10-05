@@ -11,16 +11,14 @@ const config = require('config-weaver').config();
  **/
 class CPIIndexer {
 
-    constructor(elasticsearch, elasticsearchConfig, store) {
-        this.elasticsearch = elasticsearch;
-        this.elasticsearchConfig = elasticsearchConfig;
+    constructor(elasticsearchClient, store) {
+        this.elasticsearchClient = elasticsearchClient;
         this.store = store;
     }
 
     indexData(callback) {
-        fetchDataFromElasticsearch(this.elasticsearch, this.elasticsearchConfig,
+        fetchDataFromElasticsearch(this.elasticsearchClient,
             (fetchESErr, cpiFromES) => {
-
                 // if we were able to talk to ES but it does not contain any CPI
                 // data the status code will be 404
                 const noCPIDataInES = fetchESErr && fetchESErr.statusCode === 404;
@@ -40,8 +38,7 @@ class CPIIndexer {
                     // index the data in ES.
                     if (noCPIDataInES || esOutOfDate(cpiFromES, cpiFromStore)) {
                         indexToElasticsearch(
-                            this.elasticsearch,
-                            this.elasticsearchConfig,
+                            this.elasticsearchClient,
                             cpiFromStore,
                             callback);
                     } else {
@@ -59,9 +56,7 @@ function esOutOfDate(cpiFromES, cpiFromStore) {
     return outOfDate;
 }
 
-function fetchDataFromElasticsearch(elasticsearch, elasticsearchConfig, callback) {
-    var esConfig = Object.assign({}, elasticsearchConfig);
-    const elasticsearchClient = new elasticsearch.Client(esConfig);
+function fetchDataFromElasticsearch(elasticsearchClient, callback) {
     const doc = elasticsearchData();
     elasticsearchClient.get(doc, (error, response) => {
         if (error) {
@@ -77,9 +72,7 @@ function fetchDataFromElasticsearch(elasticsearch, elasticsearchConfig, callback
     });
 }
 
-function indexToElasticsearch(elasticsearch, elasticsearchConfig, cpiData, callback) {
-    var esConfig = Object.assign({}, elasticsearchConfig);
-    const elasticsearchClient = new elasticsearch.Client(esConfig);
+function indexToElasticsearch(elasticsearchClient, cpiData, callback) {
     const doc = elasticsearchData(cpiData);
     elasticsearchClient.index(doc, (error) => {
         if (error) {

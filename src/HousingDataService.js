@@ -20,6 +20,10 @@ expressApp.use(bodyParser.json());
 class HousingDataService {
 
     constructor(config) {
+        const ElasticsearchLogger = require('./ElasticsearchLogger');
+        config.elasticsearch.log = ElasticsearchLogger;
+        const elasticsearchClient = new elasticsearch.Client(config.elasticsearch);
+
         const AmILiveCheck = require('./AmILiveCheck');
         const HousingScheduler = require('./HousingScheduler');
         const CPIStore = require('./CPIStore');
@@ -40,7 +44,7 @@ class HousingDataService {
         const mapcloud = new Mapcloud(config.mapcloud);
         const rpzDB = nano.use('rpz');
         const rpzService = new RPZService(rpzDB, mapcloud);
-        const rpzIndexer = new RPZIndexer(rpzService, elasticsearch, config.elasticsearch);
+        const rpzIndexer = new RPZIndexer(rpzService, elasticsearchClient);
         this.retryingRPZIndexer
             = new RetryingRPZIndexer(
                 rpzIndexer,
@@ -49,13 +53,12 @@ class HousingDataService {
 
         const store = new CPIStore(config.couch.url);
         const onsSource = new URLCPISource(config.cpi.source.url);
-        const indexer = new CPIIndexer(elasticsearch, config.elasticsearch, store);
+        const indexer = new CPIIndexer(elasticsearchClient, store);
         const retryingIndexer = new RetryingCPIIndexer(indexer, config.cpi.update.retryinterval);
         const source = new CPISource(onsSource, store, retryingIndexer);
 
         const health = new HousingHealth(
-            rpzDB, mapcloud, store, config.cpi.graceperiod,
-            elasticsearch, config.elasticsearch);
+            rpzDB, mapcloud, store, config.cpi.graceperiod, elasticsearchClient);
 
         this.retryingUpdater =
             new RetryingCPIUpdater(source, amILiveCheck, config.cpi.update.retryinterval);
