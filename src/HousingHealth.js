@@ -10,14 +10,12 @@ class HousingHealth {
 
     constructor(
             rpzDB,
-            mapcloud,
             cpiStore,
             gracePeriod,
             elasticsearchClient,
             dateSource) {
 
         this.rpzDB = rpzDB;
-        this.mapcloud = mapcloud;
         this.cpiStore = cpiStore;
         this.gracePeriod = gracePeriod;
         this.elasticsearchClient = elasticsearchClient;
@@ -27,7 +25,6 @@ class HousingHealth {
     health(res) {
         async.parallel([
             cb => checkRPZDesignDocHealth(this.rpzDB, cb),
-            cb => checkMapcloudHealth(this.mapcloud, cb),
             cb => checkCPIDataHealth(this.cpiStore, this.gracePeriod, this.dateSource, cb),
             cb => checkElasticsearchHealth(this.elasticsearchClient, cb)
         ],
@@ -61,21 +58,6 @@ function checkRPZDesignDocHealth(rpzDB, callback) {
         }
     });
 }
-
-function checkMapcloudHealth(mapcloud, callback) {
-    // lookup the uprn for VQ
-    mapcloud.postcodeForUprn('906423149', err => {
-        if (err) {
-            callback(undefined, {
-                ok: false,
-                messages: [err]
-            });
-        } else {
-            callback(undefined, { ok: true, messages: [] });
-        }
-    });
-}
-
 
 function checkCPIDataHealth(cpiStore, gracePeriod, dateSource, callback) {
 
