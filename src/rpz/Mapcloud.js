@@ -27,7 +27,7 @@ class Mapcloud {
                 return;
             }
 
-            if (data.totalResults !== 1) {
+            if (data.totalResults < 1) {
                 callback('Unexpected results count for uprn : ' + uprn + ' ' + data.totalResults);
                 return;
             }

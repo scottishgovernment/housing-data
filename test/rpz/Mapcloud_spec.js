@@ -53,22 +53,6 @@ describe('Mapcloud', function() {
         });
     });
 
-    it('postcodeForUprn more than one result returns an error', function (done) {
-        // ARRANGE
-        const config = anyConfig();
-        const sut = new Mapcloud(config)
-        var scope = nock(config.url)
-            .get('/address/addressbase/uprn?addrformat=2&uprn=111')
-            .reply(200, { totalResults: 10 });
-
-        // ACT
-        sut.postcodeForUprn('111', (err, data) => {
-            // ASSERT
-            expect(err).toBe('Unexpected results count for uprn : 111 10');
-            done();
-        });
-    });
-
     it('postcodeForUprn greenpath', function (done) {
         // ARRANGE
         const config = anyConfig();
