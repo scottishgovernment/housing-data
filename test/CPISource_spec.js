@@ -112,7 +112,7 @@ describe('CPISource', function() {
         // ARRANGE
         const dataFromSource = { nextRelease: '2016-01-01'};
         const source = fakeSource(dataFromSource);
-        const dataFromStore = { nextRelease: '2018-01-01'};
+        const dataFromStore = { nextRelease: '2040-01-01'};
         const store = fakeStore(null, dataFromStore, null, undefined);
         const sut = new CPISource(source, store, anyIndexer());
 
