@@ -4,50 +4,49 @@ const request = require('request');
 const async = require('async');
 
 /**
- * Provides access to the mapcloud web service.
+ * Provides access to the europa web service.
  **/
-class Mapcloud {
+class Europa {
 
     constructor(config) {
         this.baseUrl = config.url;
-        this.auth = {
-            'auth': {
-                'user': config.user,
-                'pass': config.password,
-                'sendImmediately': false
-            }
-        };
     }
 
     postcodeForUprn(uprn, callback) {
-        const url = this.baseUrl + 'address/addressbase/uprn?addrformat=2&uprn=' + uprn;
-        mapcloudRequest(url, this.auth, (error, data) => {
+        const url = this.baseUrl + 'os/abpr/address?fieldset=all&uprn=' + uprn;
+        europaRequest(url, this.auth, (error, data) => {
             if (error) {
                 callback(error);
                 return;
             }
-
-            if (data.totalResults < 1) {
-                callback('Unexpected results count for uprn : ' + uprn + ' ' + data.totalResults);
+            if (data.metadata.count < 1) {
+                callback('Unexpected results count for uprn : ' + uprn + ' ' + data.metadata.count);
                 return;
             }
-            callback(undefined, { uprn: uprn, postcode: data.results[0].postcode});
+            var postcode = data.results[0].address[0].lpi_postcode;
+            callback(undefined, { uprn: uprn, postcode: postcode});
         });
     }
 
     uprnsForPostcode(postcode, callback) {
-        const url = this.baseUrl + 'address/addressbase/postcode?pc=' + postcode;
-        mapcloudRequest(url, this.auth, (error, data) => {
+        const url = this.baseUrl + 'os/abpr/address?fieldset=all&addresstype=dpa&postcode=' + postcode;
+        europaRequest(url, this.auth, (error, data) => {
             if (error) {
                 callback(error);
                 return;
             }
-            callback(undefined, { postcode: postcode, uprns: data.results.map(r => r.uprn)});
+            if (data.metadata.count === 0) {
+                callback(undefined, { postcode: postcode, uprns: []});
+                return;
+            }
+
+            var uprns = data.results[0].address.map(r => r.uprn);
+            callback(undefined, { postcode: postcode, uprns: uprns});
         });
     }
 }
 
-function mapcloudRequest(url, auth, callback) {
+function europaRequest(url, auth, callback) {
     request(url, auth,
         (error, response, body) => {
             if (error) {
@@ -68,4 +67,4 @@ function mapcloudRequest(url, auth, callback) {
         });
 }
 
-module.exports = Mapcloud;
+module.exports = Europa;

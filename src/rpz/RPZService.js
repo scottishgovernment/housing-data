@@ -2,11 +2,6 @@
 
 /**
  * RPZService backed by couchdb.
-
-TODO :
-- name should be unique
-- add postcode validation
-
  **/
 const async = require('async');
 const moment = require('moment');
@@ -14,9 +9,9 @@ const DATE_TIME_FORMAT = 'YYYY-MM-DD';
 
 class RPZService {
 
-    constructor(rpzDB, mapcloud) {
+    constructor(rpzDB, europa) {
         this.rpzDB = rpzDB;
-        this.mapcloud = mapcloud;
+        this.europa = europa;
     }
 
     /**
@@ -245,11 +240,11 @@ function fetchValidationData(rpz, service, callback) {
         [
             // lookup postcodes for all uprns
             seriesCb => async.concat(rpz.uprns,
-                (uprn, cb) => service.mapcloud.postcodeForUprn(uprn, cb), seriesCb),
+                (uprn, cb) => service.europa.postcodeForUprn(uprn, cb), seriesCb),
 
             // lookup the uprns for postcodes
             seriesCb => async.concat(rpz.postcodes,
-                (pc, cb) => service.mapcloud.uprnsForPostcode(pc, cb), seriesCb),
+                (pc, cb) => service.europa.uprnsForPostcode(pc, cb), seriesCb),
 
             // get existing rpz's
             seriesCb => service.listDetail(seriesCb)
@@ -265,7 +260,6 @@ function fetchValidationData(rpz, service, callback) {
             const postcodesForUprns = results[0];
             const uprnsForPostcodes = results[1];
             const existing = results[2];
-
             callback(undefined, postcodesForUprns, uprnsForPostcodes, existing);
         });
 }

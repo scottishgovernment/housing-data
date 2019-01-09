@@ -34,16 +34,16 @@ class HousingDataService {
         const URLCPISource = require('./URLCPISource');
         const RetryingCPIUpdater = require('./RetryingCPIUpdater');
         const RetryingCPIIndexer = require('./RetryingCPIIndexer');
-        const Mapcloud = require('./rpz/Mapcloud.js');
+        const Europa = require('./rpz/Europa.js');
         const RPZApp = require('./rpz/RPZApp');
         const RPZService = require('./rpz/RPZService');
         const RPZIndexer = require('./rpz/RPZIndexer');
         const RetryingRPZIndexer = require('./rpz/RetryingRPZIndexer');
 
         const amILiveCheck = new AmILiveCheck();
-        const mapcloud = new Mapcloud(config.mapcloud);
+        const europa = new Europa(config.europa);
         const rpzDB = nano.use('rpz');
-        const rpzService = new RPZService(rpzDB, mapcloud);
+        const rpzService = new RPZService(rpzDB, europa);
         const rpzIndexer = new RPZIndexer(rpzService, elasticsearchClient);
         this.retryingRPZIndexer
             = new RetryingRPZIndexer(
