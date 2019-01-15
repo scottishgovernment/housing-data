@@ -1,6 +1,6 @@
 {
   "name": "housing-data",
-  "version": "0.0.0",
+  "version": "1.0.45",
   "description": "Stores housing data including rent pressure zone information",
   "scripts": {
     "test": "grunt test",
