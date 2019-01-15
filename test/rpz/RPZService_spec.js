@@ -228,13 +228,14 @@ describe('RPZService', function() {
     it('create postcode already used returns error', function (done) {
         // ARRANGE
         const sut = new RPZService(dbWithRpzs([
-            rpzWithPostcodes('one', ['G1 1QF'])
+            rpzWithPostcodes('one', ['G11QF'])
         ]), mapcloudWithLookups());
         const rpz = rpzWithPostcodes('two', ['G1 1QF']);
         const username = 'username';
 
         // ACT
         sut.create(rpz, username, (err, rpzOut) => {
+            expect(err.length).toBe(1);
             expect(err[0].field).toBe('postcode');
             done();
         });
@@ -243,7 +244,7 @@ describe('RPZService', function() {
     it('create with uprn already taken by postcode returns error', function (done) {
         // ARRANGE
         const sut = new RPZService(dbWithRpzs([
-            rpzWithPostcodes('one', ['G1 1QF'])
+            rpzWithPostcodes('one', ['G11QF'])
         ]), mapcloudWithLookups());
         const rpz = rpzWithUprns('two', ['10091788680']);
         const username = 'username';
@@ -440,12 +441,12 @@ describe('RPZService', function() {
     function mapcloudWithLookups() {
         const data = [
             {
-                postcode: 'G1 1QF',
+                postcode: 'G11QF',
                 uprns: [ 10091788680, 906700168378, 906700168379 ]
             },
 
             {
-                postcode: 'EH10 4AX',
+                postcode: 'EH104AX',
                 uprns: [ 906169837, 906169846, 906395749, 906169860, 906169869, 906169872 ]
             }
         ]

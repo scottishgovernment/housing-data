@@ -87,7 +87,9 @@ class RPZService {
      * Create a rent pressure zone.
      **/
     create(rpz, username, callback) {
-        rpz.postcodes = rpz.postcodes.map(pc => pc.toUpperCase());
+        // remove any spaces from postcode input and ensure it is in uppercase
+        rpz.postcodes = rpz.postcodes.map(pc => pc.toUpperCase().replace(/\s/g,''));
+
         this.validate(undefined, rpz, (errors) => {
             if (errors.length > 0) {
                 callback(errors);
