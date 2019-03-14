@@ -17,18 +17,8 @@ configure() {
      --gecos "Housing-data" \
      housing-data
 
-  mkdir -p /var/log/housing-data
-  chmod 755 /var/log/housing-data
-  chown housing-data:housing-data /var/log/housing-data
-
-  . /etc/profile
-  cd /opt/housing-data/couch
-  couchdb-push http://localhost:5984/ons . \
-    > /var/log/housing-data/couchdb-push.log
-
-  cd /opt/housing-data/couch-rpz
-  couchdb-push http://localhost:5984/rpz . \
-    > /var/log/housing-data/couchdb-rpz-push.log
+  /opt/housing-data/couch/push | logger -t housing-data
+  /opt/housing-data/couch-rpz/push | logger -t housing-data
 }
 
 case "$1" in

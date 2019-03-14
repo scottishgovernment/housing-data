@@ -6,11 +6,11 @@ if [ "$dir" != . ]; then
 fi
 remote=$(jq -r .env.default.db < .couchapprc)
 if ! cmp --quiet \
-  <(curl -s $remote/_design/ons |jq -S 'del(._rev)') \
+  <(curl -s $remote/_design/rpz |jq -S 'del(._rev)') \
   <(couchapp push --export | \
     jq -S 'del(._rev) | del(._attachments)') ; then
   echo "Updating design document."
-  couchapp push --docid _design/ons
+  couchapp push --docid _design/rpz
 else
  echo "Not changed"
 fi

@@ -1,4 +1,4 @@
-module.exports = {
+{
     "title": "Monthly CPI",
     "type": "object",
 
@@ -51,4 +51,4 @@ module.exports = {
     "required": [
         "type", "cdid", "datasetId", "releaseDate", "nextRelease", "data"
     ]
-};
+}

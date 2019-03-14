@@ -1,4 +1,4 @@
-module.exports = {
+{
     "title": "Monthly CPI",
     "type": "object",
 
@@ -67,7 +67,7 @@ module.exports = {
                     },
                     "timestamp": {
                         "type": "number"
-                    },
+                    }
                 },
                 "required": [
                     "name", "fromDate", "toDate", "postcodes", "uprns", "username", "timestamp"
@@ -79,4 +79,4 @@ module.exports = {
     "required": [
         "name", "fromDate", "toDate", "postcodes", "uprns", "history", "username", "timestamp"
     ]
-};
+}

@@ -24,9 +24,11 @@
     "nano": "^6.4.0",
     "node-schedule": "^1.2.3",
     "prettycron": "^0.10.0",
-    "request": "^2.81.0"
+    "request": "^2.88.0"
   },
   "devDependencies": {
+    "ajv": "^6.10.0",
+    "ajv-pack": "^0.3.1",
     "grunt": "^1.0.1",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-istanbul": "^0.7.0",
