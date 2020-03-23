@@ -96,9 +96,9 @@ function ensureIndexExists(elasticsearchClient, callback) {
 function fetchElasticSearchData(elasticsearchClient, callback) {
     elasticsearchClient.search({
             index: 'housing-data',
-            type: 'rpz',
+            type: '_doc',
             size: 10000,
-            q: '*'
+            q: 'type:rpz'
         },
 
         (err, resp) => {
@@ -136,9 +136,10 @@ function addIndexRequests(bulkRequest, item) {
     bulkRequest.body.push({
         index: {
             _index: 'housing-data',
-            _type: 'rpz',
+            _type: '_doc',
             _id: item.id
         }});
+    item.type = 'rpz';
     bulkRequest.body.push(item);
 }
 
@@ -146,7 +147,7 @@ function addDeleteRequest(bulkRequest, item) {
     bulkRequest.body.push({
         delete: {
             _index: 'housing-data',
-            _type: 'rpz',
+            _type: '_doc',
             _id: item.id
         }});
 }

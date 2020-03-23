@@ -88,7 +88,7 @@ function indexToElasticsearch(elasticsearchClient, cpiData, callback) {
 function elasticsearchData(body) {
     var data = {
         index: 'housing-data',
-        type: 'cpi',
+        type: '_doc',
         id: 'cpi'
     };
 
