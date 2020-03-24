@@ -38,7 +38,7 @@ Fetch the full details including history of a rent pressure zone
     "maxIncrease": 1.7,
     "postcodes": [],
     "uprns": ["906169837"],
-    history: []
+    "history": []
 }
 ```
 
@@ -53,7 +53,7 @@ Create a new rent pressure zone.
     "toDate": "2011-01-01",
     "maxIncrease": 1.7,
     "postcodes": [],
-    "uprns": ["906169837"],
+    "uprns": ["906169837"]
 }
 ```
 
@@ -68,7 +68,7 @@ Update a rent pressure zone.
     "toDate": "2011-01-01",
     "maxIncrease": 1.7,
     "postcodes": [],
-    "uprns": ["906169837"],
+    "uprns": ["906169837"]
 }
 ```
 
