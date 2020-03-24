@@ -1,8 +1,6 @@
 function (doc, old, user, security) {
 
-    var jsen = require('lib/jsen');
-    var schema = require('lib/rpz');    
-    var validate = jsen(schema);
+    var validate = require('validate');
     var valid = validate(doc);
 
     if (!valid) {
