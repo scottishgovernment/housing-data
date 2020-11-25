@@ -14,7 +14,7 @@ if [ -n "$couchdb_user" ] && [ -n "$couchdb_password" ]; then
   remote="${proto}://${couchdb_user}:${couchdb_password}@${rest}"
 fi
 echo "Updating design document."
-couchapp push --docid _design/publish "$remote"
+couchapp push --docid _design/ons "$remote"
 echo "Updating security document."
 curl \
   -X PUT \
