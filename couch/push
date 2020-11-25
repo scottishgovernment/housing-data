@@ -1,16 +1,23 @@
 #!/bin/bash
+. /etc/profile
 set -eu
 dir="$(dirname $0)"
 if [ "$dir" != . ]; then
   cd "$dir"
 fi
 remote=$(jq -r .env.default.db < .couchapprc)
-if ! cmp --quiet \
-  <(curl -s $remote/_design/ons |jq -S 'del(._rev)') \
-  <(couchapp push --export | \
-    jq -S 'del(._rev) | del(._attachments)') ; then
-  echo "Updating design document."
-  couchapp push --docid _design/ons
-else
- echo "Not changed"
+couchdb_user=${housing_data_couchdb_user-${couchdb_user-}}
+couchdb_password=${housing_data_couchdb_password-${couchdb_password-}}
+if [ -n "$couchdb_user" ] && [ -n "$couchdb_password" ]; then
+  proto=${remote%%://*}
+  rest=${remote#*//}
+  remote="${proto}://${couchdb_user}:${couchdb_password}@${rest}"
 fi
+echo "Updating design document."
+couchapp push --docid _design/publish "$remote"
+echo "Updating security document."
+curl \
+  -X PUT \
+  -H 'Content-Type: application/json' \
+  -d '{}' \
+  $remote/_security
