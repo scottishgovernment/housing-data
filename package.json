@@ -16,6 +16,7 @@
     "async": "^2.5.0",
     "body-parser": "^1.17.2",
     "config-weaver": "0.0.15",
+    "couchdb-push": "^2.5.0",
     "date-duration": "^1.0.1",
     "elasticsearch": "^12.1.3",
     "express": "^4.15.3",

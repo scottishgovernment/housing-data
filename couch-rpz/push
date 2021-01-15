@@ -5,7 +5,7 @@ dir="$(dirname $0)"
 if [ "$dir" != . ]; then
   cd "$dir"
 fi
-remote=$(jq -r .env.default.db < .couchapprc)
+remote=http://localhost:5984/rpz
 couchdb_user=${housing_data_couchdb_user-${couchdb_user-}}
 couchdb_password=${housing_data_couchdb_password-${couchdb_password-}}
 if [ -n "$couchdb_user" ] && [ -n "$couchdb_password" ]; then
@@ -14,9 +14,9 @@ if [ -n "$couchdb_user" ] && [ -n "$couchdb_password" ]; then
   remote="${proto}://${couchdb_user}:${couchdb_password}@${rest}"
 fi
 echo "Updating design document."
-couchapp push --docid _design/rpz "$remote"
+../node_modules/.bin/couchdb-push "$remote" .
 echo "Updating security document."
-curl \
+curl -sSf \
   -X PUT \
   -H 'Content-Type: application/json' \
   -d '{}' \
