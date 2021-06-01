@@ -76,13 +76,13 @@ function fetchDataFromElasticsearch(elasticsearchClient, callback) {
 
 function configureMapping(elasticsearchClient, callback) {
   elasticsearchClient.indices.putMapping({
-    index: "housing-data",
+    index: 'housing-data',
     body: {
       properties: {
         data: {
           properties: {
             value: {
-              type: "float"
+              type: 'float'
             }
           }
         }
