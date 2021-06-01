@@ -37,10 +37,12 @@ class CPIIndexer {
                     // if there is no CPI data in ES or it is out of date then
                     // index the data in ES.
                     if (noCPIDataInES || esOutOfDate(cpiFromES, cpiFromStore)) {
-                        indexToElasticsearch(
+                        configureMapping(this.elasticsearchClient, () => {
+                          indexToElasticsearch(
                             this.elasticsearchClient,
                             cpiFromStore,
                             callback);
+                        });
                     } else {
                         console.log('CPIIndexer. Elasticsearch data is up to date.');
                         callback();
@@ -70,6 +72,29 @@ function fetchDataFromElasticsearch(elasticsearchClient, callback) {
         }
         callback(undefined, response._source);
     });
+}
+
+function configureMapping(elasticsearchClient, callback) {
+  elasticsearchClient.indices.putMapping({
+    index: "housing-data",
+    body: {
+      properties: {
+        data: {
+          properties: {
+            value: {
+              type: "float"
+            }
+          }
+        }
+      }
+    }
+  }, err => {
+    if (err) {
+      console.log(err);
+    } else {
+      callback();
+    }
+  });
 }
 
 function indexToElasticsearch(elasticsearchClient, cpiData, callback) {

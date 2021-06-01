@@ -116,6 +116,12 @@ describe('CPIIndexer', function(done) {
                 });
             },
 
+            indices: {
+              putMapping: function(client, callback) {
+                  callback();
+              }
+            },
+
             index: function (doc, callback) {
                 this.indexed = doc;
                 callback(undefined, data);
@@ -133,6 +139,12 @@ describe('CPIIndexer', function(done) {
                 callback({
                     statusCode: 404
                 });
+            },
+
+            indices: {
+              putMapping: function(client, callback) {
+                  callback();
+              }
             },
 
             index : function(doc, callback) {
@@ -162,6 +174,12 @@ describe('CPIIndexer', function(done) {
                     callback(undefined, {
                         _source: getData
                     });
+                },
+
+                indices: {
+                  putMapping: function(client, callback) {
+                      callback();
+                  }
                 },
 
                 index: function(doc, callback) {
