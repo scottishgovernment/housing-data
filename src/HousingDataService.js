@@ -54,8 +54,8 @@ class HousingDataService {
         const store = new CPIStore(config.couch.url);
         const onsSource = new URLCPISource(config.cpi.source.url);
         const indexer = new CPIIndexer(elasticsearchClient, store);
-        const retryingIndexer = new RetryingCPIIndexer(indexer, config.cpi.update.retryinterval);
-        const source = new CPISource(onsSource, store, retryingIndexer);
+        this.retryingIndexer = new RetryingCPIIndexer(indexer, config.cpi.update.retryinterval);
+        const source = new CPISource(onsSource, store, this.retryingIndexer);
 
         const health = new HousingHealth(
             rpzDB, store, config.cpi.graceperiod, elasticsearchClient);
@@ -84,9 +84,10 @@ class HousingDataService {
         console.log('Server listening at http://%s:%s', host, port);
 
         // on startup, update the ons and rpz data, then schedule regular updates.
-        async.parallel(
+        async.series(
             [
                 cb => this.retryingUpdater.update(cb),
+                cb => this.retryingIndexer.update(cb),
                 cb => this.retryingRPZIndexer.index(cb)
             ],
             // initial update is finsihed, scheule regular updates
