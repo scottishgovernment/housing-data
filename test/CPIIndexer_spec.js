@@ -10,13 +10,14 @@ describe('CPIIndexer', function(done) {
         const sut = new CPIIndexer(elasticsearch, store);
 
         // ACT
-        sut.indexData(() => {
-            // ASSERT\
-
+        sut.indexData()
+        .then(() => {
+            // ASSERT
             // the data from the store should have been indexed
             expect(elasticsearch.indexed.body.releaseDate).toBe('2011-01-01');
             done();
-        });
+        })
+        .catch(done.fail);
     });
 
     it('404 from ES results in new data being indexed in ES', function (done) {
@@ -26,13 +27,14 @@ describe('CPIIndexer', function(done) {
         const sut = new CPIIndexer(elasticsearch, store);
 
         // ACT
-        sut.indexData(() => {
-            // ASSERT\
-
+        sut.indexData()
+        .then(() => {
+            // ASSERT
             // the data from the store should have been indexed
             expect(elasticsearch.indexed.body.releaseDate).toBe('2011-01-01');
             done();
-        });
+        })
+        .catch(done.fail);
     });
 
     it('up to date data in elasticsearch is not updated', function (done) {
@@ -42,13 +44,14 @@ describe('CPIIndexer', function(done) {
         const sut = new CPIIndexer(elasticsearch, store);
 
         // ACT
-        sut.indexData(() => {
-            // ASSERT\
-
+        sut.indexData()
+        .then(() => {
+            // ASSERT
             // the data from the store should have been indexed
             expect(elasticsearch.indexed).toBe(undefined);
             done();
-        });
+        })
+        .catch(done.fail);
     });
 
     it('failure to conect to ES returned by callback', function (done) {
@@ -61,7 +64,9 @@ describe('CPIIndexer', function(done) {
         const sut = new CPIIndexer(elasticsearch);
 
         // ACT
-        sut.indexData((err) => {
+        sut.indexData()
+        .then(done.fail)
+        .catch(err => {
             // ASSERT
             expect(err).toBe(ESerr);
             done();
@@ -78,9 +83,10 @@ describe('CPIIndexer', function(done) {
         const sut = new CPIIndexer(elasticsearch, store);
 
         // ACT
-        sut.indexData((err) => {
-            // ASSERT\
-
+        sut.indexData()
+        .then(done.fail)
+        .catch(err => {
+            // ASSERT
             // the data from the store should have been indexed
             expect(err).toBe(storeErr);
             done();
@@ -98,8 +104,10 @@ describe('CPIIndexer', function(done) {
         const sut = new CPIIndexer(elasticsearch, store);
 
         // ACT
-        sut.indexData((err) => {
-            // ASSERT\
+        sut.indexData()
+        .then(done.fail)
+        .catch(err => {
+            // ASSERT
             expect(err).toBe(indexErr);
             done();
         });
@@ -110,21 +118,21 @@ describe('CPIIndexer', function(done) {
         return {
             indexed: undefined,
 
-            get: function (doc, callback) {
-                callback(undefined, {
+            get: async function(doc) {
+                return {
                     _source: data
-                });
+                };
             },
 
             indices: {
-              putMapping: function(client, callback) {
-                  callback();
+              putMapping: async function(client) {
+                  // noop
               }
             },
 
-            index: function (doc, callback) {
+            index: async function (doc) {
                 this.indexed = doc;
-                callback(undefined, data);
+                return data;
             }
 
         };
@@ -134,35 +142,32 @@ describe('CPIIndexer', function(done) {
         return {
             indexed: undefined,
 
-
-            get : function(doc, callback) {
-                callback({
+            get: async function(doc) {
+                throw {
                     statusCode: 404
-                });
+                };
             },
 
             indices: {
-              putMapping: function(client, callback) {
-                  callback();
+              putMapping: async function(client) {
+                  // noop
               }
             },
 
-            index : function(doc, callback) {
+            index: async function(doc) {
                 this.indexed = doc;
-                callback(undefined, {});
+                return {};
             }
 
-            };
-        return es;
+        };
     }
 
     function failingGetElasticsearch(err) {
         return {
             indexed: undefined,
 
-
-            get: function(doc, callback) {
-                callback(err);
+            get: async function(doc) {
+                throw err;
             }
 
         }
@@ -170,33 +175,33 @@ describe('CPIIndexer', function(done) {
 
     function failingIndexElasticsearch(getData, err) {
         return {
-                get: function(doc, callback) {
-                    callback(undefined, {
+                get: async function(doc) {
+                    return {
                         _source: getData
-                    });
+                    };
                 },
 
                 indices: {
-                  putMapping: function(client, callback) {
-                      callback();
-                  }
+                    putMapping: async function(client) {
+                        // noop
+                    }
                 },
 
-                index: function(doc, callback) {
-                    callback(err, {});
+                index: async function(doc) {
+                    throw err;
                 }
         }
     }
 
     function storeWithData(data) {
         return {
-            latest : (callback) => callback(undefined, data)
+            latest: () => Promise.resolve(data)
         }
     }
 
     function failingStore(err) {
         return {
-            latest : (callback) => callback(err)
+            latest: () => Promise.reject(err)
         }
     }
 

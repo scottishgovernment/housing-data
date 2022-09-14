@@ -3,8 +3,6 @@
 /**
  * Index CPI data with retries.
  **/
-const request = require('request');
-
 class RetryingCPIIndexer {
 
     constructor(indexer, retryinterval) {
@@ -14,18 +12,25 @@ class RetryingCPIIndexer {
     }
 
     update(callback) {
+        if (this.running) {
+            callback();
+            return;
+        }
+
         this.running = true;
-        var indexerCallback = (err) => {
-            if (err) {
+        const attempt = () => {
+            this.indexer.indexData()
+            .then(() => {
+                this.running = false;
+                callback();
+            })
+            .catch(err => {
                 console.log('RetryingCPIIndexer. Failed to index data:', err);
                 console.log('RetryingCPIIndexer. Retrying in ', this.retryinterval);
-                setTimeout(() => this.indexer.indexData(indexerCallback), this.retryinterval);
-                return;
-            }
-            this.running = false;
-            callback();
+                setTimeout(attempt, this.retryinterval);
+            });
         };
-        this.indexer.indexData(indexerCallback);
+        attempt();
     }
 
     isRunning() {

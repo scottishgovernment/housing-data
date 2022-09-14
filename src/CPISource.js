@@ -1,7 +1,5 @@
 'use strict';
 
-const util = require('util');
-
 /**
  * A source of CPI data.
  *
@@ -17,16 +15,9 @@ class CPISource {
         this.dateUtils = require('./dateUtils')(dateSource);
     }
 
-    get(callback) {
-        this._get()
-        .then(cpi => { callback(null, cpi); })
-        .catch(err => { callback(err); });
-    }
-
-    async _get() {
-        const latest = util.promisify(this.store.latest.bind(this.store));
+    async get() {
         // get the most recent CPI data from the store
-        const cachedCPI = await latest();
+        const cachedCPI = await this.store.latest();
 
         // if we have cached cpi data and it is not out of date then return that
         if (cachedCPI && !this.dateUtils.hasDatePassed(cachedCPI.nextRelease)) {
@@ -34,10 +25,8 @@ class CPISource {
             return cachedCPI;
         }
 
-        const sourceGet = util.promisify(this.source.get.bind(this.source));
-        const cpi = await sourceGet();
-        const storePut = util.promisify(this.store.store.bind(this.store));
-        await storePut(cpi);
+        const cpi = await this.source.get();
+        await this.store.store(cpi);
         console.log('CPISource.  CPI data in store is up to date.');
 
         // tell the indexer that the data has been updated.

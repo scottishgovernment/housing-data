@@ -4,7 +4,7 @@
  * Store for CPI data.
  **/
 const http = require('http');
-const request = require('request');
+const got = require('got');
 
 class CPIStore {
 
@@ -12,57 +12,37 @@ class CPIStore {
         this.couchUrl = couchUrl;
     }
 
-    latest(callback) {
+    async latest() {
         const url = this.couchUrl + 'ons/_design/ons/_view/cpi?limit=1&include_docs=true&descending=true';
-        request(url, (error, response, body) => {
-            if (error) {
-                callback(error);
-                return;
-            }
-
-            var parsedBody = JSON.parse(body);
-            if (parsedBody.total_rows > 0) {
-                var doc = parsedBody.rows[0].doc;
-                delete doc['_id'];
-                delete doc['_rev'];
-                callback(undefined, doc);
-            } else {
-                callback(null, null);
-            }
-        });
+        const parsedBody = await got.get(url).json();
+        if (parsedBody.total_rows == 0) {
+            return null;
+        }
+        var doc = parsedBody.rows[0].doc;
+        delete doc['_id'];
+        delete doc['_rev'];
+        return doc;
     }
 
-    store(cpi, callback) {
+    async store(cpi) {
         const url = this.couchUrl + 'ons/_design/ons/_view/cpi?key="' + cpi.releaseDate + '"';
-        request(url, (error, response, body) => {
-            if (error || response.statusCode !== 200) {
-                callback(error);
-                return;
-            }
+        const parsedBody = await got.get(url, { retry: 0 }).json();
 
-            var parsedBody = JSON.parse(body);
-            if (parsedBody.rows.length > 0) {
-                // dont need to store this document as it already exists
-                callback();
-                return;
-            }
+        // dont need to store this document if it already exists
+        if (parsedBody.rows.length > 0) {
+            return;
+        }
 
-            // post the new document
-            postToCouch(this, cpi, callback);
+        await this.postToCouch(cpi);
+    }
+
+    async postToCouch(cpi) {
+        const uri = this.couchUrl + 'ons';
+        await got.post(uri, {
+            json: cpi
         });
     }
-}
 
-function postToCouch(store, cpi, callback) {
-    var options = {
-        uri: store.couchUrl + 'ons',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        json: cpi
-    };
-    request(options, (error, response, body) => callback(error, body));
 }
 
 module.exports = CPIStore;

@@ -5,7 +5,7 @@
  **/
 const CPIParser = require('./CPIParser');
 const util = require('util');
-const request = require('request');
+const got = require('got');
 
 class URLCPISource {
 
@@ -14,16 +14,10 @@ class URLCPISource {
         this.parser = new CPIParser();
     }
 
-    get(callback) {
-        this._get()
-        .then(cpi => { callback(null, cpi); })
-        .catch(err => { callback(err, null); });
-    }
-
-    async _get() {
+    async get() {
         console.log(`Fetching ${this.url}`);
         const parse = util.promisify(this.parser.parse.bind(this.parser));
-        var stream = request.get(this.url);
+        const stream = got.stream.get(this.url);
         return await parse(stream);
     }
 

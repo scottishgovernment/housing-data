@@ -232,49 +232,49 @@ describe('HousingHealth', function() {
 
     function errorStore() {
         return {
-            latest: function (callback) {
-                callback('games up the pole', undefined);
+            latest: async function() {
+                throw 'games up the pole';
             }
         }
     }
 
     function noDataStore() {
         return {
-            latest: function (callback) {
-                callback(undefined, undefined);
+            latest: async function() {
+                return null;
             }
         }
     }
 
     function greenPathStore() {
         return {
-            latest: function (callback) {
-                callback(undefined, {
+            latest: async function() {
+                return {
                     releaseDate: '2017-06-01',
                     nextRelease: '2017-07-01'
-                });
+                };
             }
         }
     }
 
     function outOfDateStore() {
         return {
-            latest: function (callback) {
-                callback(undefined, {
+            latest: async function() {
+                return {
                     releaseDate: '2016-06-01',
                     nextRelease: '2016-07-01'
-                });
+                };
             }
         }
     }
 
     function dateOfNextReleaseDateStore() {
         return {
-            latest: function (callback) {
-                callback(undefined, {
+            latest: async function() {
+                return {
                     releaseDate: '2017-06-01',
                     nextRelease: '2017-06-20'
-                });
+                };
             }
         }
     }

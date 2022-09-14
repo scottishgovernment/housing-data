@@ -2,6 +2,8 @@ var CPIStore = require('../src/CPIStore.js');
 
 describe('CPIStore', function() {
 
+    const nock = require('nock');
+
     it('returns latest if present', function (done) {
 
         // ARRANGE
@@ -11,13 +13,14 @@ describe('CPIStore', function() {
         const sut = new CPIStore('http://localhost:1111/');
 
         // ACT
-        sut.latest(function (err, res) {
-            expect(err).toBe(undefined);
+        sut.latest()
+        .then(res => {
             expect(res._id).toBeUndefined();
             expect(res._res).toBeUndefined();
             expect(res.title).toBe('title');
             done();
-        });
+        })
+        .catch(done.fail);
     });
 
     it('no latest', function (done) {
@@ -29,11 +32,12 @@ describe('CPIStore', function() {
         const sut = new CPIStore('http://localhost:1111/');
 
         // ACT
-        sut.latest(function (err, res) {
-            expect(err).toBeNull();
+        sut.latest()
+        .then(res => {
             expect(res).toBeNull();
             done();
-        });
+        })
+        .catch(done.fail);
     });
 
     it('error from latest', function (done) {
@@ -45,9 +49,10 @@ describe('CPIStore', function() {
         const sut = new CPIStore('http://localhost:1111/');
 
         // ACT
-        sut.latest(function (err, res) {
+        sut.latest()
+        .then(done.fail)
+        .catch(err => {
             expect(err).toBeDefined();
-            expect(res).toBeUndefined();
             done();
         });
     });
@@ -61,7 +66,9 @@ describe('CPIStore', function() {
         const sut = new CPIStore('http://localhost:1111/');
 
         // ACT
-        sut.latest(function (err, res) {
+        sut.latest()
+        .then(done.fail)
+        .catch(err => {
             expect(err).toBeDefined();
             done();
         });
@@ -72,32 +79,30 @@ describe('CPIStore', function() {
 
         // ARRANGE
         var cpi = sampleCpi();
-        require('nock')('http://localhost:1111/')
+        nock('http://localhost:1111/')
             .get('/ons/_design/ons/_view/cpi?key=%22date%22')
             .reply(200, sampleLatest);
         const sut = new CPIStore('http://localhost:1111/');
 
         // ACT
-        sut.store(cpi, function (err) {
-            expect(err).toBeUndefined();
-            done();
-        });
+        sut.store(cpi)
+        .then(done)
+        .catch(done.fail);
     });
 
     it('store item, error from couch on get', function (done) {
 
         // ARRANGE
         var cpi = sampleCpi();
-        require('nock')('http://localhost:1111/')
+        nock('http://localhost:1111/')
             .get('/ons/_design/ons/_view/cpi?key=%22date%22')
             .reply(500, {});
         const sut = new CPIStore('http://localhost:1111/');
 
         // ACT
-        sut.store(cpi, function (err) {
-            expect(err).toBeDefined();
-            done();
-        });
+        sut.store(cpi)
+        .then(done.fail)
+        .catch(() => { done(); })
     });
 
 

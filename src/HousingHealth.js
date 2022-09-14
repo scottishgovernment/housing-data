@@ -60,16 +60,10 @@ function checkRPZDesignDocHealth(rpzDB, callback) {
 }
 
 function checkCPIDataHealth(cpiStore, gracePeriod, dateSource, callback) {
-
-    cpiStore.latest((error, cpi) => {
-        if (error) {
-            callback(undefined, { ok:false, messages: [error] });
-            return;
-        }
-
+    cpiStore.latest()
+    .then(cpi => {
         if (!cpi) {
-            callback(undefined, { ok:false, messages: ['No CPI data in store'] });
-            return;
+            return { ok:false, messages: ['No CPI data in store'] };
         }
 
         var ok = true;
@@ -84,8 +78,11 @@ function checkCPIDataHealth(cpiStore, gracePeriod, dateSource, callback) {
             messages.push('Next release date has passed. Grace period: ' + gracePeriod);
             ok = false;
         }
-
-        callback(undefined, { ok: ok, messages: [] });
+        return { ok: ok, messages: messages };
+    }).catch(error => {
+        return { ok:false, messages: [error] };
+    }).then(health => {
+        callback(null, health);
     });
 }
 

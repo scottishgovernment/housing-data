@@ -3,8 +3,6 @@
 /**
  * Update CPI data using a source and addingretries.
  **/
-const request = require('request');
-
 class RetryingCPIUpdater {
 
     constructor(source, amILiveCheck, retryinterval) {
@@ -39,7 +37,9 @@ class RetryingCPIUpdater {
                 callback();
                 return;
             }
-            this.source.get(callback);
+            this.source.get()
+            .then(() => { callback(); })
+            .catch(callback);
         });
     }
 

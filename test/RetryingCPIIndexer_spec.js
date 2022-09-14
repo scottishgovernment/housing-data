@@ -20,12 +20,12 @@ describe('RetryingCPIIndexer', function() {
     function indexerSuceedAfterFailures(desiredFailureCount) {
         var failureCount = 0;
         return {
-            indexData : (callback) => {
+            indexData: async () => {
                 if (failureCount === desiredFailureCount) {
-                    callback(undefined, 'Done');
+                    return 'Done';
                 } else {
                     failureCount++;
-                    callback('Error', undefined);
+                    throw 'Error';
                 }
             },
 

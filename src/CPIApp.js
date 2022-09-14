@@ -12,12 +12,11 @@ class CPIApp {
 
     register(expressApp) {
         expressApp.get('/cpi', (req, res) => {
-            this.source.get((error, cpi) => {
-                if (error) {
-                    res.status(500).send(error);
-                } else {
-                    res.json(cpi);
-                }
+            this.source.get()
+            .then(cpi => {
+                res.json(cpi);
+            }).catch(error => {
+                res.status(500).send(error);
             });
         });
 

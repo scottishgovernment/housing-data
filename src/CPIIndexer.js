@@ -1,7 +1,5 @@
 'use strict';
 
-const config = require('config-weaver').config();
-
 /**
  * Used to update Elasticsearch CPI data using a CPIStore.
  *
@@ -16,40 +14,17 @@ class CPIIndexer {
         this.store = store;
     }
 
-    indexData(callback) {
-        fetchDataFromElasticsearch(this.elasticsearchClient,
-            (fetchESErr, cpiFromES) => {
-                // if we were able to talk to ES but it does not contain any CPI
-                // data the status code will be 404
-                const noCPIDataInES = fetchESErr && fetchESErr.statusCode === 404;
-                if (fetchESErr && !noCPIDataInES) {
-                   callback(fetchESErr);
-                   return;
-                }
-
-                // get data from the store
-                this.store.latest((storeError, cpiFromStore) => {
-                    if (storeError) {
-                        callback(storeError);
-                        return;
-                    }
-
-                    // if there is no CPI data in ES or it is out of date then
-                    // index the data in ES.
-                    if (noCPIDataInES || esOutOfDate(cpiFromES, cpiFromStore)) {
-                        configureMapping(this.elasticsearchClient, () => {
-                          indexToElasticsearch(
-                            this.elasticsearchClient,
-                            cpiFromStore,
-                            callback);
-                        });
-                    } else {
-                        console.log('CPIIndexer. Elasticsearch data is up to date.');
-                        callback();
-                    }
-                });
-            }
-        );
+    async indexData() {
+        const cpiFromES = await fetchDataFromElasticsearch(this.elasticsearchClient);
+        const cpiFromStore = await this.store.latest();
+        // if there is no CPI data in ES or it is out of date then
+        // index the data in ES.
+        if (cpiFromES == null || esOutOfDate(cpiFromES, cpiFromStore)) {
+            await configureMapping(this.elasticsearchClient);
+            await indexToElasticsearch(this.elasticsearchClient, cpiFromStore);
+        } else {
+            console.log('CPIIndexer. Elasticsearch data is up to date.');
+        }
     }
 }
 
@@ -58,24 +33,24 @@ function esOutOfDate(cpiFromES, cpiFromStore) {
     return outOfDate;
 }
 
-function fetchDataFromElasticsearch(elasticsearchClient, callback) {
+async function fetchDataFromElasticsearch(elasticsearchClient) {
     const doc = elasticsearchData();
-    elasticsearchClient.get(doc, (error, response) => {
-        if (error) {
-            if (error.statusCode === 404) {
-                console.log('CPIIndexer: No CPI data in elasticsearch (got 404)');
-            } else {
-                console.log('CPIIndexer: Failed to get CPI data from elasticsearch: ', response, error);
-            }
-            callback(error, undefined);
-            return;
+    return elasticsearchClient.get(doc)
+    .then(response => {
+        return response._source;
+    }).catch(error => {
+        if (error.statusCode === 404) {
+            console.log('CPIIndexer: No CPI data in elasticsearch (got 404)');
+            return null;
+        } else {
+            console.log('CPIIndexer: Failed to get CPI data from elasticsearch: ', error);
+            throw error;
         }
-        callback(undefined, response._source);
     });
 }
 
-function configureMapping(elasticsearchClient, callback) {
-  elasticsearchClient.indices.putMapping({
+function configureMapping(elasticsearchClient) {
+  return elasticsearchClient.indices.putMapping({
     index: 'housing-data',
     body: {
       properties: {
@@ -88,24 +63,19 @@ function configureMapping(elasticsearchClient, callback) {
         }
       }
     }
-  }, err => {
-    if (err) {
-      console.log(err);
-    } else {
-      callback();
-    }
+  }).catch(err => {
+    console.log("CPIIndexer. Could not put mapping", err);
   });
 }
 
-function indexToElasticsearch(elasticsearchClient, cpiData, callback) {
+function indexToElasticsearch(elasticsearchClient, cpiData) {
     const doc = elasticsearchData(cpiData);
-    elasticsearchClient.index(doc, (error) => {
-        if (error) {
-            console.log('CPIIndexer. Failed to index CPI data: ', error);
-        } else {
-            console.log('CPIIndexer: Indexed CPI data');
-        }
-        callback(error);
+    return elasticsearchClient.index(doc)
+    .then(() => {
+        console.log('CPIIndexer: Indexed CPI data');
+    }).catch(error => {
+        console.log('CPIIndexer. Failed to index CPI data: ', error);
+        throw error;
     });
 }
 
@@ -113,7 +83,6 @@ function indexToElasticsearch(elasticsearchClient, cpiData, callback) {
 function elasticsearchData(body) {
     var data = {
         index: 'housing-data',
-        type: '_doc',
         id: 'cpi'
     };
 

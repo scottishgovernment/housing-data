@@ -8,10 +8,10 @@ describe('URLCPISource', function() {
         var sut = new URLCPISource('https://www.ons.gov.uk/generator?format=csv&uri=/economy/inflationandpriceindices/timeseries/d7bt/mm23');
 
         // ACT
-        sut.get((error, data) => {
-            expect(error).toBe(null);
+        sut.get()
+        .then(data => {
             expect(data.data.length).toBeGreaterThan(1);
             done();
-        });
+        }).catch(done.fail);
     });
 });

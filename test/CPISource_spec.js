@@ -2,24 +2,23 @@ var CPISource = require('../src/CPISource.js');
 
 describe('CPISource', function() {
 
-    it('Returns error from store.latest', function (done) {
-
+    it('Returns error from store.latest', function(done) {
         // ARRANGE
         const source = undefined;
         const store = fakeStore('Error from latest', undefined);
         const sut = new CPISource(source, store, anyIndexer());
 
         // ACT
-        sut.get((error, data) => {
-            //ASSERT
+        sut.get()
+        .then(done.fail)
+        .catch(error => {
+            // ASSERT
             expect(error).toEqual('Error from latest');
-            expect(data).toBeUndefined();
             done();
         });
     });
 
-    it('Returns error from store.store', function (done) {
-
+    it('Returns error from store.store', function(done) {
         // ARRANGE
         const dataFromSource = { nextRelease: '2017-01-01'};
         const source = fakeSource(dataFromSource);
@@ -27,31 +26,32 @@ describe('CPISource', function() {
         const sut = new CPISource(source, store, anyIndexer());
 
         // ACT
-        sut.get((error, data) => {
-            //ASSERT
+        sut.get()
+        .then(done.fail)
+        .catch(error => {
+            // ASSERT
             expect(error).toEqual('Error from store');
-            expect(data).toBeUndefined();
             done();
         });
     });
 
-    it('Returns error from source', function (done) {
-
+    it('Returns error from source', function(done) {
         // ARRANGE
         const source = erroringSource('Error from source');
         const store = fakeStore(undefined, { nextRelease: '2015-01-01'}, "Error from store", undefined);
         const sut = new CPISource(source, store, anyIndexer());
 
         // ACT
-        sut.get((error, data) => {
+        sut.get()
+        .then(done.fail)
+        .catch(error => {
             //ASSERT
             expect(error).toEqual('Error from source');
-            expect(data).toBeUndefined();
             done();
         });
     });
 
-    it('Returns data from source if no data in store', function (done) {
+    it('Returns data from source if no data in store', function(done) {
 
         // ARRANGE
         const dataFromSource = { nextRelease: '2017-01-01'};
@@ -60,15 +60,16 @@ describe('CPISource', function() {
         const sut = new CPISource(source, store, anyIndexer());
 
         // ACT
-        sut.get((error, data) => {
+        sut.get()
+        .then(data => {
             //ASSERT
-            expect(error).toBeNull();
             expect(data).toBe(dataFromSource);
             done();
-        });
+        })
+        .catch(done.fail);
     });
 
-    it('Returns data from source if data in store is out of date', function (done) {
+    it('Returns data from source if data in store is out of date', function(done) {
 
         // ARRANGE
         const dataFromSource = { nextRelease: '2017-01-01'};
@@ -78,16 +79,16 @@ describe('CPISource', function() {
         const sut = new CPISource(source, store, anyIndexer());
 
         // ACT
-        sut.get((error, data) => {
+        sut.get()
+        .then(data => {
             //ASSERT
-            expect(error).toBeNull();
             expect(data).toBe(dataFromSource);
             done();
-        });
+        })
+        .catch(done.fail);
     });
 
-    it('Returns data from source if data on day of nextUpdate', function (done) {
-
+    it('Returns data from source if data on day of nextUpdate', function(done) {
         // ARRANGE
         const dataFromSource = { nextRelease: '2017-01-01'};
         const source = fakeSource(dataFromSource);
@@ -99,15 +100,16 @@ describe('CPISource', function() {
         const sut = new CPISource(source, store, anyIndexer(), dateSource);
 
         // ACT
-        sut.get((error, data) => {
-            //ASSERT
-            expect(error).toBeNull();
+        sut.get()
+        .then(data => {
+            // ASSERT
             expect(data).toBe(dataFromSource);
             done();
-        });
+        })
+        .catch(done.fail);
     });
 
-    it('Returns data from store if data up to date', function (done) {
+    it('Returns data from store if data up to date', function(done) {
 
         // ARRANGE
         const dataFromSource = { nextRelease: '2016-01-01'};
@@ -117,12 +119,13 @@ describe('CPISource', function() {
         const sut = new CPISource(source, store, anyIndexer());
 
         // ACT
-        sut.get((error, data) => {
+        sut.get()
+        .then(data => {
             //ASSERT
-            expect(error).toBeNull();
             expect(data).toBe(dataFromStore);
             done();
-        });
+        })
+        .catch(done.fail);
     });
 
     class FakeStore {
@@ -133,12 +136,20 @@ describe('CPISource', function() {
             this.storeData = storeData;
         }
 
-        latest(callback) {
-            callback(this.latestError, this.latestData);
+        latest() {
+            if (this.latestError) {
+                return Promise.reject(this.latestError);
+            } else {
+                return Promise.resolve(this.latestData);
+            }
         }
 
-        store(cpi, callback) {
-            callback(this.storeError, this.storeData);
+        store(cpi) {
+            if (this.storeError) {
+                return Promise.reject(this.storeError);
+            } else {
+                return Promise.resolve(this.storeData);
+            }
         }
     }
 
@@ -150,8 +161,8 @@ describe('CPISource', function() {
         constructor(data) {
             this.data = data;
         }
-        get(callback) {
-            callback(null, this.data);
+        get() {
+            return Promise.resolve(this.data);
         }
     }
 
@@ -161,16 +172,16 @@ describe('CPISource', function() {
 
     function erroringSource(error) {
         return {
-            get: function (callback) {
-                callback(error);
+            get: function () {
+                return Promise.reject(error);
             }
         }
     }
 
     function anyIndexer() {
         return {
-            update(callback) {
-                callback(undefined);
+            async update() {
+                // noop
             }
         }
     }

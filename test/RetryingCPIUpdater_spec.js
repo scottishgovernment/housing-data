@@ -53,12 +53,12 @@ describe('RetryingCPIUpdater', function() {
     function sourceSuceedAfterFailures(desiredFailureCount) {
         var failureCount = 0;
         return {
-            get : (callback) => {
+            get: () => {
                 if (failureCount === desiredFailureCount) {
-                    callback(undefined, 'Done');
+                    return Promise.resolve('Done');
                 } else {
                     failureCount++;
-                    callback('Error', undefined);
+                    return Promise.reject('Error');
                 }
             },
 
