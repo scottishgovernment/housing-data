@@ -1,4 +1,4 @@
-var CPIParser = require('../target/src/CPIParser.js');
+var CPIParser = require('../src/CPIParser.js');
 
 describe('CPIParser', function() {
 

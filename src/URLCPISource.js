@@ -4,6 +4,7 @@
  * Fetch CPI data from a url
  **/
 const CPIParser = require('./CPIParser');
+const util = require('util');
 const request = require('request');
 
 class URLCPISource {
@@ -14,9 +15,18 @@ class URLCPISource {
     }
 
     get(callback) {
-        var stream = request.get(this.url);
-        this.parser.parse(stream, (error, cpi) => callback(null, cpi));
+        this._get()
+        .then(cpi => { callback(null, cpi); })
+        .catch(err => { callback(err, null); });
     }
+
+    async _get() {
+        console.log(`Fetching ${this.url}`)
+        const parse = util.promisify(this.parser.parse.bind(this.parser));
+        var stream = request.get(this.url);
+        return await parse(stream);
+    }
+
 }
 
 module.exports = URLCPISource;

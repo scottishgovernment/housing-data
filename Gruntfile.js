@@ -30,11 +30,11 @@ function generateSchemaValidator() {
 module.exports = function(grunt) {
 
     var pkg = grunt.file.readJSON('package.json');
-    require('load-grunt-config')(grunt);
-    grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-jasmine-node');
-    grunt.loadNpmTasks('grunt-istanbul');
-    grunt.loadNpmTasks('grunt-sonar-runner');
+    require('load-grunt-config')(grunt, {
+        init: true,
+        loadGruntTasks: false
+    });
+
     grunt.task.registerTask(
         'validator',
         'Generates a validator for the CouchDB schema',
@@ -119,61 +119,18 @@ module.exports = function(grunt) {
                   }
                 }
               ]
-            },
-            test: {
-                files: [
-                    {
-                        expand: true,
-                        src: ['src/*.txt'],
-                        dest: 'target/src/'
-                    }
-                ],
-            },
-        },
-
-        instrument: {
-            files: [
-                'src/**/*.js',
-            ],
-            options: {
-                lazy: true,
-                basePath: 'target/'
             }
         },
 
-        jasmine_node: {
-            test: {
-                all: ['test'],
-                src: '*.js',
-                verbose: true,
-                options: {
-                    specs: 'test/*_spec.js',
-                    helpers: 'test/*_helper.js',
-                    forceExit: true,
-                    extensions: 'js',
-                    specNameMatcher: 'spec',
-                    jUnit: {
-                        report: false,
-                        savePath: "target/reports/",
-                        useDotNotation: true,
-                        consolidate: true
-                    }
+        shell: {
+            options: {
+                stdout: true
+            },
+            nyc: {
+                command: "nyc jasmine-node --junitreport --output out/reports test",
+                execOptions: {
+                    env: "PATH=node_modules/.bin"
                 }
-            }
-        },
-
-        storeCoverage: {
-            options: {
-                dir: 'target/coverage'
-            }
-        },
-
-        makeReport: {
-            src: 'target/coverage/*.json',
-            options: {
-                type: 'lcov',
-                dir: 'target/coverage',
-                print: 'detail'
             }
         },
 
@@ -187,5 +144,7 @@ module.exports = function(grunt) {
         }
 
     });
+
+    require('jit-grunt')(grunt, {});
 
 };

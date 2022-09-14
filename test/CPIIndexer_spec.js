@@ -1,5 +1,5 @@
 'use strict';
-var CPIIndexer = require('../target/src/CPIIndexer.js');
+var CPIIndexer = require('../src/CPIIndexer.js');
 
 describe('CPIIndexer', function(done) {
 

@@ -1,4 +1,4 @@
-var RetryingCPIUpdater = require('../target/src/RetryingCPIUpdater.js');
+var RetryingCPIUpdater = require('../src/RetryingCPIUpdater.js');
 
 describe('RetryingCPIUpdater', function() {
 

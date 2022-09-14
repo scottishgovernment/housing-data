@@ -1,6 +1,6 @@
 'use strict';
 
-var Europa = require('../../target/src/rpz/Europa.js');
+var Europa = require('../../src/rpz/Europa.js');
 var nock = require('nock');
 describe('Europa', function() {
 

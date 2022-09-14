@@ -1,6 +1,6 @@
 'use strict';
 
-var HousingHealth = require('../target/src/HousingHealth.js');
+var HousingHealth = require('../src/HousingHealth.js');
 
 describe('HousingHealth', function() {
 

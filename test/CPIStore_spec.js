@@ -1,4 +1,4 @@
-var CPIStore = require('../target/src/CPIStore.js');
+var CPIStore = require('../src/CPIStore.js');
 
 describe('CPIStore', function() {
 

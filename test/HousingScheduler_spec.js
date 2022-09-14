@@ -1,4 +1,4 @@
-var HousingScheduler = require('../target/src/HousingScheduler.js');
+var HousingScheduler = require('../src/HousingScheduler.js');
 
 // This is not a very good test.
 describe('HousingScheduler', function() {

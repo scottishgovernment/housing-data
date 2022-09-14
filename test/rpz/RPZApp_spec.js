@@ -1,4 +1,4 @@
-var RPZApp = require('../../target/src/rpz/RPZApp.js');
+var RPZApp = require('../../src/rpz/RPZApp.js');
 require('jasmine-beforeall');
 var express = require('express');
 var request = require('supertest');

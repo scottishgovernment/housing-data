@@ -1,7 +1,6 @@
 'use strict';
 
-var RPZService = require('../../target/src/rpz/RPZService.js');
-//var RPZService = require('../../src/rpz/RPZService.js');
+var RPZService = require('../../src/rpz/RPZService.js');
 
 describe('RPZService', function() {
 

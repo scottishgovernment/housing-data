@@ -1,4 +1,4 @@
-var CPISource = require('../target/src/CPISource.js');
+var CPISource = require('../src/CPISource.js');
 
 describe('CPISource', function() {
 
@@ -125,24 +125,38 @@ describe('CPISource', function() {
         });
     });
 
-    function fakeStore(latestError, latestData, storeError, storeData) {
-        return {
-            latest: function (callback) {
-                callback(latestError, latestData);
-            },
+    class FakeStore {
+        constructor(latestError, latestData, storeError, storeData) {
+            this.latestError = latestError;
+            this.latestData = latestData;
+            this.storeError = storeError;
+            this.storeData = storeData;
+        }
 
-            store: function (cpi, callback) {
-                callback(storeError, storeData);
-            }
+        latest(callback) {
+            callback(this.latestError, this.latestData);
+        }
+
+        store(cpi, callback) {
+            callback(this.storeError, this.storeData);
+        }
+    }
+
+    function fakeStore(latestError, latestData, storeError, storeData) {
+        return new FakeStore(latestError, latestData, storeError, storeData);
+    }
+
+    class FakeSource {
+        constructor(data) {
+            this.data = data;
+        }
+        get(callback) {
+            callback(null, this.data);
         }
     }
 
     function fakeSource(data) {
-        return {
-            get: function (callback) {
-                callback(null, data);
-            }
-        }
+        return new FakeSource(data);
     }
 
     function erroringSource(error) {

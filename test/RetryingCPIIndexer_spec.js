@@ -1,4 +1,4 @@
-var RetryingCPIIndexer = require('../target/src/RetryingCPIIndexer.js');
+var RetryingCPIIndexer = require('../src/RetryingCPIIndexer.js');
 
 describe('RetryingCPIIndexer', function() {
 

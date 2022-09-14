@@ -2,7 +2,6 @@
 # -*- makefile -*-
 
 #export DH_VERBOSE=1
-NPM=/usr/local/bin/npm
 PKG=housing-data
 
 override_dh_auto_build:
@@ -14,11 +13,11 @@ override_dh_auto_test:
 
 override_dh_install:
 	dh_install
-	$(NPM) ls --parseable | \
+	npm ls --parseable | \
 	  sed "s@$$PWD/node_modules/@@" | \
 	  sort \
 	  > target/deps-all.txt
-	$(NPM) ls --parseable --production | \
+	npm ls --parseable --production | \
 	sed "s@$$PWD/node_modules/@@" | \
 	  sort \
 	  > target/deps-prod.txt

@@ -1,11 +1,7 @@
 test:
   description: 'Run tests'
   tasks:
-    - copy:test
-    - instrument
-    - jasmine_node:test
-    - storeCoverage
-    - makeReport
+    - shell:nyc
 sonar:
   description: 'Run SonarQube in preview mode'
   tasks:

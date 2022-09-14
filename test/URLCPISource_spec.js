@@ -1,4 +1,4 @@
-var URLCPISource = require('../target/src/URLCPISource.js');
+var URLCPISource = require('../src/URLCPISource.js');
 
 describe('URLCPISource', function() {
 

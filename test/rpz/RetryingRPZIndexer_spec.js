@@ -1,4 +1,4 @@
-var RetryingRPZIndexer = require('../../target/src/rpz/RetryingRPZIndexer.js');
+var RetryingRPZIndexer = require('../../src/rpz/RetryingRPZIndexer.js');
 
 describe('RetryingRPZIndexer', function() {
 
