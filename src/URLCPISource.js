@@ -21,7 +21,7 @@ class URLCPISource {
     }
 
     async _get() {
-        console.log(`Fetching ${this.url}`)
+        console.log(`Fetching ${this.url}`);
         const parse = util.promisify(this.parser.parse.bind(this.parser));
         var stream = request.get(this.url);
         return await parse(stream);

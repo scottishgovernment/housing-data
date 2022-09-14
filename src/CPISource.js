@@ -33,7 +33,7 @@ class CPISource {
             console.log('CPISource.  CPI data is up to date.');
             return cachedCPI;
         }
-    
+
         const sourceGet = util.promisify(this.source.get.bind(this.source));
         const cpi = await sourceGet();
         const storePut = util.promisify(this.store.store.bind(this.store));
