@@ -125,9 +125,15 @@ describe('CPIIndexer', function(done) {
             },
 
             indices: {
-              putMapping: async function(client) {
-                  // noop
-              }
+                exists: async function() {
+                    return true;
+                },
+                create: async function() {
+                    // noop
+                },
+                putMapping: async function(client) {
+                    // noop
+                }
             },
 
             index: async function (doc) {
@@ -149,9 +155,15 @@ describe('CPIIndexer', function(done) {
             },
 
             indices: {
-              putMapping: async function(client) {
-                  // noop
-              }
+                exists: async function() {
+                    return false;
+                },
+                create: async function() {
+                    // noop
+                },
+                putMapping: async function(client) {
+                    // noop
+                }
             },
 
             index: async function(doc) {
@@ -182,6 +194,12 @@ describe('CPIIndexer', function(done) {
                 },
 
                 indices: {
+                    exists: async function() {
+                        return false;
+                    },
+                    create: async function() {
+                        // noop
+                    },    
                     putMapping: async function(client) {
                         // noop
                     }
