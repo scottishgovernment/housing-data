@@ -66,7 +66,10 @@ module.exports = function(grunt) {
                     lcov: {
                         reportPaths: 'target/coverage/lcov.info'
                     }
-                }
+                },
+                exclusions: [
+                  'src/ElasticsearchLogger.js'
+                ]
             }
         };
         if (token) {
