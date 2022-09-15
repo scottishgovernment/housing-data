@@ -17,6 +17,19 @@ describe('RetryingCPIIndexer', function() {
         });
     });
 
+    it('returns early if already running', function (done) {
+        // ARRANGE
+        const indexer = indexerSuceedAfterFailures(2);
+        const sut = new RetryingCPIIndexer(indexer, 100);
+
+        // ACT
+        sut.update(() => {});
+        sut.update(() => {
+            expect(sut.isRunning).toBeTruthy();
+            done();
+        });
+    });
+
     function indexerSuceedAfterFailures(desiredFailureCount) {
         var failureCount = 0;
         return {

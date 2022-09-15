@@ -23,7 +23,7 @@ class RetryingCPIUpdater {
 
             console.log('RetryingCPIUpdater. Failed to update data:', err);
             console.log('RetryingCPIUpdater. Retrying in ', this.retryinterval);
-            setTimeout(() => this.updateIfLive(sourceCallback), this.retryinterval);
+            setTimeout(() => { this.updateIfLive(sourceCallback); }, this.retryinterval);
         };
 
         // only if this is the live leg
@@ -31,7 +31,8 @@ class RetryingCPIUpdater {
     }
 
     updateIfLive(callback) {
-        this.amILiveCheck.check((error, live) => {
+        this.amILiveCheck.check()
+        .then(live => {
             if (!live) {
                 console.log('RetryingCPIUpdater. This is not the live leg.');
                 callback();
@@ -40,6 +41,9 @@ class RetryingCPIUpdater {
             this.source.get()
             .then(() => { callback(); })
             .catch(callback);
+        }).catch(error => {
+            console.log('RetryingCPIUpdater. Could not determine if this is the live leg');
+            callback(error);
         });
     }
 

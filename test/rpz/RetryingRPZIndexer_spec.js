@@ -52,16 +52,16 @@ describe('RetryingRPZIndexer', function() {
 
     function live() {
         return {
-            check(callback) {
-                callback(undefined, true);
+            check: async function() {
+                return true;
             }
         }
     }
 
     function notlive() {
         return {
-            check(callback) {
-                callback(undefined, false);
+            check: async function() {
+                return false;
             }
         }
     }

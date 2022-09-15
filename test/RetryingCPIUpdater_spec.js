@@ -34,8 +34,8 @@ describe('RetryingCPIUpdater', function() {
 
     function amILiveCheck(isLive) {
         return {
-            check: function (callback) {
-                callback(undefined, isLive);
+            check: async function() {
+                return isLive;
             }
         }
     }
@@ -44,8 +44,8 @@ describe('RetryingCPIUpdater', function() {
         return {
             amILiveCalls: 0,
 
-            check: function (callback) {
-                callback(undefined, values[this.amILiveCalls++]);
+            check: async function() {
+                return values[this.amILiveCalls++];
             }
         }
     }

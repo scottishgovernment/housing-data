@@ -31,13 +31,16 @@ class RetryingRPZIndexer {
     }
 
     updateIfLive(callback) {
-        this.amILiveCheck.check((error, live) => {
+        this.amILiveCheck.check()
+        .then(live => {
             if (!live) {
                 console.log('RetryingRPZIndexer. This is not the live leg.');
                 callback();
                 return;
             }
             this.rpzIndexer.index(callback);
+        }).catch(err => {
+            console.log('RetryingRPZIndexer. Could not determine if this is the live leg.');
         });
     }
 
