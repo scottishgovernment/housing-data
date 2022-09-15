@@ -127,7 +127,7 @@ module.exports = function(grunt) {
                 stdout: true
             },
             nyc: {
-                command: "nyc jasmine-node --junitreport --output out/reports test",
+                command: "nyc jasmine-node --junitreport --output target/reports test",
                 execOptions: {
                     env: "PATH=node_modules/.bin"
                 }
