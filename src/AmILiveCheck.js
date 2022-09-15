@@ -10,7 +10,7 @@ class AmILiveCheck {
 
     async check() {
         const execFile = util.promisify(child_process.execFile);
-        execFile('/usr/local/bin/am-i-live')
+        return execFile('/usr/local/bin/am-i-live')
         .then(() => {
             return true;
         })
