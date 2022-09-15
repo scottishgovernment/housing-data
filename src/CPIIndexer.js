@@ -49,23 +49,28 @@ async function fetchDataFromElasticsearch(elasticsearchClient) {
     });
 }
 
-function configureMapping(elasticsearchClient) {
-  return elasticsearchClient.indices.putMapping({
-    index: 'housing-data',
-    body: {
-      properties: {
-        data: {
-          properties: {
-            value: {
-              type: 'float'
-            }
-          }
-        }
-      }
+async function configureMapping(elasticsearchClient) {
+    const index = { index: "housing-data" };
+    const exists = await elasticsearchClient.indices.exists(index);
+    if (!exists) {
+        await elasticsearchClient.indices.create(index);
     }
-  }).catch(err => {
-    console.log('CPIIndexer. Could not put mapping', err);
-  });
+    return elasticsearchClient.indices.putMapping({
+        index: 'housing-data',
+        body: {
+            properties: {
+                data: {
+                    properties: {
+                        value: {
+                            type: 'float'
+                        }
+                    }
+                }
+            }
+        }
+    }).catch(err => {
+        console.log('CPIIndexer. Could not put mapping', err);
+    });
 }
 
 function indexToElasticsearch(elasticsearchClient, cpiData) {
