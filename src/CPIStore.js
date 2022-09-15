@@ -15,7 +15,7 @@ class CPIStore {
     async latest() {
         const url = this.couchUrl + 'ons/_design/ons/_view/cpi?limit=1&include_docs=true&descending=true';
         const parsedBody = await got.get(url).json();
-        if (parsedBody.total_rows == 0) {
+        if (parsedBody.total_rows === 0) {
             return null;
         }
         var doc = parsedBody.rows[0].doc;
