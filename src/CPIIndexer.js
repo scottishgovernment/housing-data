@@ -50,7 +50,7 @@ async function fetchDataFromElasticsearch(elasticsearchClient) {
 }
 
 async function configureMapping(elasticsearchClient) {
-    const index = { index: "housing-data" };
+    const index = { index: 'housing-data' };
     const exists = await elasticsearchClient.indices.exists(index);
     if (!exists) {
         await elasticsearchClient.indices.create(index);
