@@ -64,7 +64,7 @@ function configureMapping(elasticsearchClient) {
       }
     }
   }).catch(err => {
-    console.log("CPIIndexer. Could not put mapping", err);
+    console.log('CPIIndexer. Could not put mapping', err);
   });
 }
 
