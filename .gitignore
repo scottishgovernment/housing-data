@@ -4,9 +4,6 @@
 couch/ajv
 couch/fast-deep-equal.js
 couch/validate.js
-couch-rpz/ajv
-couch-rpz/fast-deep-equal.js
-couch-rpz/validate.js
 debian/.debhelper
 debian/changelog
 debian/debhelper-build-stamp

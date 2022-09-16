@@ -1,6 +1,0 @@
-[
-  // Schema
-  "rpz.json",
-  // Script to upload the design document if it has changed
-  "push"
-]

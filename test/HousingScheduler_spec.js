@@ -11,14 +11,8 @@ describe('HousingScheduler', function() {
                 isRunning : function () { return false },
                 update: async function() { }
         };
-        var rpzIndexer = {
-                index: function (cb) { cb(); }
-        };
 
-        const sut = new HousingScheduler(
-                            updater, 'updatertab',
-                            rpzIndexer, 'rpzindexertab',
-                            scheduler);
+        const sut = new HousingScheduler(updater, 'updatertab', scheduler);
 
         // ACT
         sut.schedule();
@@ -35,14 +29,7 @@ describe('HousingScheduler', function() {
                 isRunning : function () { return true },
                 update: async function () { }
         };
-        var rpzIndexer = {
-                index: function (cb) { cb(); }
-        };
-
-        const sut = new HousingScheduler(
-                            updater, 'updatertab',
-                            rpzIndexer, 'rpzindexertab',
-                            scheduler);
+        const sut = new HousingScheduler(updater, 'updatertab', scheduler);
 
         // ACT
         sut.schedule();

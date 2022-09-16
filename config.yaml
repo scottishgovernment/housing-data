@@ -9,18 +9,8 @@ cpi:
     crontab: '0 * * * *'
     retryinterval: 10000
 
-rpz:
-  index:
-    crontab: '*/5 * * * *'
-    retryinterval: 10000
-
 couch:
   url: http://localhost:5984/
-
-mapcloud:
-    url: 'https://api.themapcloud.com/'
-    user:
-    password:
 
 elasticsearch:
   host: localhost:9200

@@ -18,7 +18,6 @@ configure() {
      housing-data
 
   /opt/housing-data/couch/push | logger -t housing-data
-  /opt/housing-data/couch-rpz/push | logger -t housing-data
 }
 
 case "$1" in

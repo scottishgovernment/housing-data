@@ -9,7 +9,7 @@ describe('HousingHealth', function() {
         const dateSource = {
            date: () => new Date(2017, 5, 20, 12, 0, 0, 0)
        };
-        const sut = new HousingHealth(healthyRPZDB(),
+        const sut = new HousingHealth(
             greenPathStore(), 'PT12H', healthyElasticsearch(), dateSource);
         var status;
         var res = {
@@ -29,7 +29,7 @@ describe('HousingHealth', function() {
     it('error from source returns expected json', function (done) {
 
         // ARRANGE
-        const sut = new HousingHealth(healthyRPZDB(),
+        const sut = new HousingHealth(
             errorStore(), 'PT12H', healthyElasticsearch());
         var status;
         var res = {
@@ -49,7 +49,7 @@ describe('HousingHealth', function() {
     it('no data in store returns expected json', function (done) {
 
         // ARRANGE
-        const sut = new HousingHealth(healthyRPZDB(),
+        const sut = new HousingHealth(
             noDataStore(), 'PT12H', healthyElasticsearch());
         var status;
         var res = {
@@ -72,7 +72,7 @@ describe('HousingHealth', function() {
         const dateSource = {
             date: () => new Date(2017, 6, 20, 12, 0, 0, 0)
         }
-        const sut = new HousingHealth(healthyRPZDB(),
+        const sut = new HousingHealth(
             outOfDateStore(), 'PT12H', healthyElasticsearch(), dateSource);
         var status;
         var res = {
@@ -96,7 +96,7 @@ describe('HousingHealth', function() {
         const dateSource = {
             date: () => new Date(2017, 5, 20, 10, 0, 0, 0)// note that the month is zero based
         }
-        const sut = new HousingHealth(healthyRPZDB(),
+        const sut = new HousingHealth(
             dateOfNextReleaseDateStore(), 'PT12H', healthyElasticsearch(), dateSource);
         var status;
         var res = {
@@ -119,7 +119,7 @@ describe('HousingHealth', function() {
         const dateSource = {
             date: () => new Date(2017, 5, 20, 12, 1, 0, 0)// note that the month is zero based
         }
-        const sut = new HousingHealth(healthyRPZDB(),
+        const sut = new HousingHealth(
             dateOfNextReleaseDateStore(), 'PT12H', healthyElasticsearch(), dateSource);
         var status;
         var res = {
@@ -139,7 +139,7 @@ describe('HousingHealth', function() {
 
     it('stopped elasticsearch returns expected json', function (done) {
         // ARRANGE
-        const sut = new HousingHealth(healthyRPZDB(),
+        const sut = new HousingHealth(
             greenPathStore(), 'PT12H', stoppedElasticsearch());
 
         var status;
@@ -159,7 +159,7 @@ describe('HousingHealth', function() {
 
     it('unhealthly elasticsearch returns expected json', function (done) {
         // ARRANGE
-        const sut = new HousingHealth(healthyRPZDB(),
+        const sut = new HousingHealth(
             greenPathStore(), 'PT12H', unhealthlyElasticsearch());
         var status;
         var res = {
@@ -178,7 +178,7 @@ describe('HousingHealth', function() {
 
     it('badly formed elasticsearch health returns expected json', function (done) {
         // ARRANGE
-        const sut = new HousingHealth(healthyRPZDB(),
+        const sut = new HousingHealth(
             greenPathStore(), 'PT12H', malformedHealthElasticsearch());
         var status;
         var res = {
@@ -194,41 +194,6 @@ describe('HousingHealth', function() {
         // ACT
         sut.health(res);
     });
-
-    it('unhealthy rpzDB returns expected json', function (done) {
-        // ARRANGE
-        const sut = new HousingHealth(unhealthyRPZDB(),
-            greenPathStore(), 'PT12H', healthyElasticsearch());
-        var status;
-        var res = {
-            status: s => status = s,
-            send: json => {
-                // ASSERT
-                expect(json.ok).toBe(false);
-                expect(status).toBe(503);
-                done();
-            }
-        };
-
-        // ACT
-        sut.health(res);
-    });
-
-    function healthyRPZDB() {
-        return {
-            head(url, cb) {
-                cb(undefined);
-            }
-        };
-    }
-
-    function unhealthyRPZDB() {
-        return {
-            head(url, cb) {
-                cb('error');
-            }
-        };
-    }
 
     function errorStore() {
         return {

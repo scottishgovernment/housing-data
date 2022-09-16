@@ -9,13 +9,11 @@ var async = require('async');
 class HousingHealth {
 
     constructor(
-            rpzDB,
             cpiStore,
             gracePeriod,
             elasticsearchClient,
             dateSource) {
 
-        this.rpzDB = rpzDB;
         this.cpiStore = cpiStore;
         this.gracePeriod = gracePeriod;
         this.elasticsearchClient = elasticsearchClient;
@@ -24,7 +22,6 @@ class HousingHealth {
 
     health(res) {
         async.parallel([
-            cb => checkRPZDesignDocHealth(this.rpzDB, cb),
             cb => checkCPIDataHealth(this.cpiStore, this.gracePeriod, this.dateSource, cb),
             cb => checkElasticsearchHealth(this.elasticsearchClient, cb)
         ],
@@ -44,19 +41,6 @@ class HousingHealth {
             });
         });
     }
-}
-
-function checkRPZDesignDocHealth(rpzDB, callback) {
-    rpzDB.head('_design/rpz', err => {
-        if (err) {
-            callback(undefined, {
-                ok: false,
-                messages: ['failed to get rpz design doc']
-            });
-        } else {
-            callback(undefined, { ok: true, messages: [] });
-        }
-    });
 }
 
 function checkCPIDataHealth(cpiStore, gracePeriod, dateSource, callback) {

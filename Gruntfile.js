@@ -19,13 +19,6 @@ function generateSchemaValidator() {
     var validate = ajv.compile(schema);
     var moduleCode = standaloneCode(ajv, validate)
     fs.writeFileSync(path.join(dir, 'validate.js'), moduleCode.toString());
-
-    dir = path.join(__dirname, 'couch-rpz');
-    json = fs.readFileSync(path.join(dir, 'rpz.json'));
-    schema = JSON.parse(json);
-    validate = ajv.compile(schema);
-    var moduleCode = standaloneCode(ajv, validate)
-    fs.writeFileSync(path.join(dir, 'validate.js'), moduleCode.toString());
 }
 
 module.exports = function(grunt) {
