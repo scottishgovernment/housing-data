@@ -11,26 +11,26 @@ class RetryingCPIIndexer {
         this.running = false;
     }
 
-    update(callback) {
+    async update() {
         if (this.running) {
-            callback();
             return;
         }
 
+        console.log('RetryingCPIIndexer. Running');
         this.running = true;
-        const attempt = () => {
-            this.indexer.indexData()
+        while (this.running) {
+            await this.indexer.indexData()
             .then(() => {
                 this.running = false;
-                callback();
             })
             .catch(err => {
                 console.log('RetryingCPIIndexer. Failed to index data:', err);
                 console.log('RetryingCPIIndexer. Retrying in ', this.retryinterval);
-                setTimeout(attempt, this.retryinterval);
+                return new Promise((resolve, reject) => {
+                    setTimeout(resolve, this.retryinterval);
+                });
             });
-        };
-        attempt();
+        }
     }
 
     isRunning() {

@@ -12,39 +12,33 @@ class RetryingCPIUpdater {
         this.running = false;
     }
 
-    update(callback) {
+    async update() {
         this.running = true;
-        var sourceCallback = (err) => {
-            if (!err) {
+        console.log('RetryingCPIUpdater. Running');
+        while (this.running) {
+            await this.updateIfLive()
+            .then(() => {
                 this.running = false;
-                callback();
-                return;
-            }
-
-            console.log('RetryingCPIUpdater. Failed to update data:', err);
-            console.log('RetryingCPIUpdater. Retrying in ', this.retryinterval);
-            setTimeout(() => { this.updateIfLive(sourceCallback); }, this.retryinterval);
-        };
-
-        // only if this is the live leg
-        this.updateIfLive(sourceCallback);
+                console.log('RetryingCPIUpdater. Done.');
+            })
+            .catch(err => {
+                console.log('RetryingCPIUpdater. Failed to update data:', err);
+                console.log('RetryingCPIUpdater. Retrying in ', this.retryinterval);
+                return new Promise((resolve, reject) => {
+                    setTimeout(resolve, this.retryinterval);
+                });
+            });
+        }
     }
 
-    updateIfLive(callback) {
-        this.amILiveCheck.check()
-        .then(live => {
-            if (!live) {
-                console.log('RetryingCPIUpdater. This is not the live leg.');
-                callback();
-                return;
-            }
-            this.source.get()
-            .then(() => { callback(); })
-            .catch(callback);
-        }).catch(error => {
-            console.log('RetryingCPIUpdater. Could not determine if this is the live leg');
-            callback(error);
-        });
+    async updateIfLive() {
+        const live = await this.amILiveCheck.check();
+        if (!live) {
+            console.log('RetryingCPIUpdater. This is not the live leg.');
+            return;
+        }
+        console.log('RetryingCPIUpdater. This is the live leg. Checking CPI data.');
+        await this.source.get();
     }
 
     isRunning() {

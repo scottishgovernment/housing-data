@@ -33,9 +33,10 @@ class HousingScheduler {
                 console.log('HousingScheduler. CPI update job is already running. Next run: ', nextUpdate);
                 return;
             }
-            this.cpiUpdater.update(
-                () => console.log('HousingScheduler. Finished CPI update job. Next run: ', nextUpdate)
-            );
+            this.cpiUpdater.update()
+            .then(() => {
+                console.log('HousingScheduler. Finished CPI update job. Next run: ', nextUpdate);
+            });
         });
 
         this.scheduler.scheduleJob(this.rpzIndexerCrontab, () => {

@@ -30,9 +30,14 @@ class CPISource {
         console.log('CPISource.  CPI data in store is up to date.');
 
         // tell the indexer that the data has been updated.
-        this.indexer.update(() => {
+        await this.indexer.update()
+        .then(() => {
             console.log('CPISource.  Updated elasticsearch.');
+        })
+        .catch(err => {
+            console.log('CPISource. Indexing failed', err);
         });
+
         return cpi;
     }
 }

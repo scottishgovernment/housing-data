@@ -9,12 +9,14 @@ describe('RetryingCPIUpdater', function() {
         const sut = new RetryingCPIUpdater(source, amILiveCheck(true), 100);
 
         // ACT
-        sut.update(() => {
+        sut.update()
+        .then(() => {
             // ASSERT
             expect(source.getFailureCount()).toBe(2);
             expect(sut.isRunning()).toBe(false);
             done();
-        });
+        })
+        .catch(done.fail);
     });
 
     it('does not retry if not live leg', function (done) {
@@ -24,12 +26,14 @@ describe('RetryingCPIUpdater', function() {
         const sut = new RetryingCPIUpdater(source, amILiveCheckValues([true, true, true]), 100);
 
         // ACT
-        sut.update(() => {
+        sut.update()
+        .then(() => {
             // ASSERT
             expect(source.getFailureCount()).toBe(3);
             expect(sut.isRunning()).toBe(false);
             done();
-        });
+        })
+        .catch(done.fail);
     });
 
     function amILiveCheck(isLive) {

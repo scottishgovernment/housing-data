@@ -9,9 +9,7 @@ describe('HousingScheduler', function() {
         var scheduler = mockscheduler();
         var updater = {
                 isRunning : function () { return false },
-                update: function (cb) {
-                    cb();
-                }
+                update: async function() { }
         };
         var rpzIndexer = {
                 index: function (cb) { cb(); }
@@ -35,9 +33,7 @@ describe('HousingScheduler', function() {
         var scheduler = mockscheduler();
         var updater = {
                 isRunning : function () { return true },
-                update: function (cb) {
-                    cb();
-                }
+                update: async function () { }
         };
         var rpzIndexer = {
                 index: function (cb) { cb(); }

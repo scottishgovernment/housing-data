@@ -84,14 +84,10 @@ class HousingDataService {
         console.log('Server listening at http://%s:%s', host, port);
 
         // on startup, update the ons and rpz data, then schedule regular updates.
-        async.series(
-            [
-                cb => this.retryingUpdater.update(cb),
-                cb => this.retryingIndexer.update(cb),
-                cb => this.retryingRPZIndexer.index(cb)
-            ],
-            // initial update is finsihed, scheule regular updates
-            () => this.scheduler.schedule());
+        this.retryingUpdater.update()
+        .then(() => this.retryingIndexer.update())
+        .catch(console.log)
+        .then(() => this.scheduler.schedule());
     }
 }
 
