@@ -5,26 +5,27 @@ var path = require('path');
 
 // Generate schema validation code from the schema
 function generateSchemaValidator() {
-  var Ajv = require('ajv');
-  var pack = require('ajv-pack');
-  var ajv = new Ajv({
-    allErrors: true,
-    sourceCode: true
-  });
+    const Ajv = require('ajv');
+    const standaloneCode = require("ajv/dist/standalone").default
+    var ajv = new Ajv({
+        allErrors: true,
+        code: {
+            source: true
+        }
+    });
+    var dir = path.join(__dirname, 'couch');
+    var json = fs.readFileSync(path.join(dir, 'cpi.json'));
+    var schema = JSON.parse(json);
+    var validate = ajv.compile(schema);
+    var moduleCode = standaloneCode(ajv, validate)
+    fs.writeFileSync(path.join(dir, 'validate.js'), moduleCode.toString());
 
-  var dir = path.join(__dirname, 'couch');
-  var json = fs.readFileSync(path.join(dir, 'cpi.json'));
-  var schema = JSON.parse(json);
-  var validate = ajv.compile(schema);
-  var moduleCode = pack(ajv, validate);
-  fs.writeFileSync(path.join(dir, 'validate.js'), moduleCode.toString());
-
-  dir = path.join(__dirname, 'couch-rpz');
-  json = fs.readFileSync(path.join(dir, 'rpz.json'));
-  schema = JSON.parse(json);
-  validate = ajv.compile(schema);
-  moduleCode = pack(ajv, validate);
-  fs.writeFileSync(path.join(dir, 'validate.js'), moduleCode.toString());
+    dir = path.join(__dirname, 'couch-rpz');
+    json = fs.readFileSync(path.join(dir, 'rpz.json'));
+    schema = JSON.parse(json);
+    validate = ajv.compile(schema);
+    var moduleCode = standaloneCode(ajv, validate)
+    fs.writeFileSync(path.join(dir, 'validate.js'), moduleCode.toString());
 }
 
 module.exports = function(grunt) {
@@ -83,51 +84,6 @@ module.exports = function(grunt) {
     };
 
     grunt.initConfig({
-
-        copy: {
-            couchdb: {
-              files: [
-                {
-                  expand: true,
-                  cwd: "node_modules",
-                  src: [
-                    "ajv/lib/compile/formats.js",
-                    "ajv/lib/compile/util.js",
-                    "ajv/lib/compile/ucs2length.js"
-                  ],
-                  dest: "couch"
-                },
-                {
-                  expand: true,
-                  cwd: "node_modules",
-                  src: "fast-deep-equal/index.js",
-                  dest: "couch",
-                  rename: function(dest, src) {
-                    return dest + "/fast-deep-equal.js";
-                  }
-                },
-                {
-                  expand: true,
-                  cwd: "node_modules",
-                  src: [
-                    "ajv/lib/compile/formats.js",
-                    "ajv/lib/compile/util.js",
-                    "ajv/lib/compile/ucs2length.js"
-                  ],
-                  dest: "couch-rpz"
-                },
-                {
-                  expand: true,
-                  cwd: "node_modules",
-                  src: "fast-deep-equal/index.js",
-                  dest: "couch-rpz",
-                  rename: function(dest, src) {
-                    return dest + "/fast-deep-equal.js";
-                  }
-                }
-              ]
-            }
-        },
 
         shell: {
             options: {
