@@ -3,18 +3,22 @@
 /**
  * Store for CPI data.
  **/
-const http = require('http');
-const got = require('got');
+const nano = require('nano');
 
 class CPIStore {
 
     constructor(couchUrl) {
-        this.couchUrl = couchUrl;
+        const couch = nano(couchUrl);
+        this.db = couch.db.use('ons');
     }
 
     async latest() {
-        const url = this.couchUrl + 'ons/_design/ons/_view/cpi?limit=1&include_docs=true&descending=true';
-        const parsedBody = await got.get(url).json();
+        const parsedBody = await this.db.view('ons', 'cpi', {
+            limit: 1,
+            include_docs: true,
+            descending: true
+        });
+
         if (parsedBody.total_rows === 0) {
             return null;
         }
@@ -25,22 +29,16 @@ class CPIStore {
     }
 
     async store(cpi) {
-        const url = this.couchUrl + 'ons/_design/ons/_view/cpi?key="' + cpi.releaseDate + '"';
-        const parsedBody = await got.get(url, { retry: 0 }).json();
+        const parsedBody = await this.db.view('ons', 'cpi', {
+            key: cpi.releaseDate
+        });
 
         // dont need to store this document if it already exists
         if (parsedBody.rows.length > 0) {
             return;
         }
 
-        await this.postToCouch(cpi);
-    }
-
-    async postToCouch(cpi) {
-        const uri = this.couchUrl + 'ons';
-        await got.post(uri, {
-            json: cpi
-        });
+        await this.db.insert(cpi, cpi.releaseDate);
     }
 
 }
