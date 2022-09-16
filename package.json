@@ -14,10 +14,8 @@
   "license": "MIT",
   "dependencies": {
     "async": "^2.5.0",
-    "body-parser": "^1.17.2",
     "config-weaver": "0.0.15",
     "couchdb-push": "^3.1.0",
-    "date-duration": "^1.0.1",
     "elasticsearch": "^16.7.2",
     "express": "^4.15.3",
     "fast-csv": "^2.4.0",
@@ -25,8 +23,7 @@
     "moment": "^2.18.1",
     "nano": "^10.0.0",
     "node-schedule": "^1.2.3",
-    "prettycron": "^0.10.0",
-    "request": "^2.88.0"
+    "prettycron": "^0.10.0"
   },
   "devDependencies": {
     "ajv": "^8.11.0",
@@ -38,7 +35,6 @@
     "load-grunt-config": "^4.0.1",
     "nock": "^13.2.9",
     "nyc": "^15.1.0",
-    "sealant": "^0.1.1",
-    "supertest": "^3.0.0"
+    "sealant": "^0.1.1"
   }
 }

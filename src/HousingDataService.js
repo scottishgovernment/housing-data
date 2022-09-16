@@ -1,15 +1,9 @@
 'use strict';
 
 var elasticsearch = require('elasticsearch');
-var async = require('async');
-var nano = require('nano')('http://localhost:5984');
 var nodeSchedule = require('node-schedule');
 var express = require('express');
-var bodyParser = require('body-parser');
 var expressApp = express();
-var http = require('http');
-expressApp.use(bodyParser.urlencoded({ extended: false }));
-expressApp.use(bodyParser.json());
 
 /**
  * Housing data service.
