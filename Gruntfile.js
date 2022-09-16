@@ -70,7 +70,10 @@ module.exports = function(grunt) {
                 exclusions: [
                   'src/AmILiveCheck.js',
                   'src/ElasticsearchLogger.js'
-                ]
+                ],
+                working: {
+                  directory: "target/sonar"
+                }
             }
         };
         if (token) {
