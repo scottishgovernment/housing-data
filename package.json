@@ -23,7 +23,7 @@
     "fast-csv": "^2.4.0",
     "got": "^11.8.2",
     "moment": "^2.18.1",
-    "nano": "^6.4.0",
+    "nano": "^10.0.0",
     "node-schedule": "^1.2.3",
     "prettycron": "^0.10.0",
     "request": "^2.88.0"
