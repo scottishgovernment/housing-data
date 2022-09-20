@@ -32,7 +32,7 @@ class HousingDataService {
 
         const targets = this.targets(config);
         const source = new CPISource(onsSource, store, targets);
-        const health = new HousingHealth(store, config.cpi.graceperiod, elasticsearchClient);
+        const health = new HousingHealth(store, config.cpi.graceperiod);
 
         this.retryingUpdater =
             new RetryingCPIUpdater(source, amILiveCheck, config.cpi.update.retryinterval);

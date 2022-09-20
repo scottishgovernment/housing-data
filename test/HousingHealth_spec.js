@@ -9,8 +9,7 @@ describe('HousingHealth', function() {
         const dateSource = {
            date: () => new Date(2017, 5, 20, 12, 0, 0, 0)
        };
-        const sut = new HousingHealth(
-            greenPathStore(), 'PT12H', healthyElasticsearch(), dateSource);
+        const sut = new HousingHealth(greenPathStore(), 'PT12H', dateSource);
         var status;
         var res = {
             status: s => status = s,
@@ -18,19 +17,18 @@ describe('HousingHealth', function() {
                 // ASSERT
                 expect(json.ok).toBe(true);
                 expect(status).toBe(200);
-                done();
             }
         };
 
         // ACT
-        sut.health(res);
+        sut.health(res)
+        .then(() => done());
     });
 
     it('error from source returns expected json', function (done) {
 
         // ARRANGE
-        const sut = new HousingHealth(
-            errorStore(), 'PT12H', healthyElasticsearch());
+        const sut = new HousingHealth(errorStore(), 'PT12H');
         var status;
         var res = {
             status: s => status = s,
@@ -38,19 +36,18 @@ describe('HousingHealth', function() {
                 // ASSERT
                 expect(json.ok).toBe(false);
                 expect(status).toBe(503);
-                done();
             }
         };
 
         // ACT
-        sut.health(res);
+        sut.health(res)
+        .then(() => done());
     });
 
     it('no data in store returns expected json', function (done) {
 
         // ARRANGE
-        const sut = new HousingHealth(
-            noDataStore(), 'PT12H', healthyElasticsearch());
+        const sut = new HousingHealth(noDataStore(), 'PT12H');
         var status;
         var res = {
             status: s => status = s,
@@ -58,12 +55,12 @@ describe('HousingHealth', function() {
                 // ASSERT
                 expect(json.ok).toBe(false);
                 expect(status).toBe(503);
-                done();
             }
         };
 
         // ACT
-        sut.health(res);
+        sut.health(res)
+        .then(() => done());
     });
 
     it('out of date date returns expected json', function (done) {
@@ -73,7 +70,7 @@ describe('HousingHealth', function() {
             date: () => new Date(2017, 6, 20, 12, 0, 0, 0)
         }
         const sut = new HousingHealth(
-            outOfDateStore(), 'PT12H', healthyElasticsearch(), dateSource);
+            outOfDateStore(), 'PT12H', dateSource);
         var status;
         var res = {
             status: s => status = s,
@@ -81,12 +78,12 @@ describe('HousingHealth', function() {
                 // ASSERT
                 expect(json.ok).toBe(false);
                 expect(status).toBe(503);
-                done();
             }
         };
 
         // ACT
-        sut.health(res);
+        sut.health(res)
+        .then(() => done());
     });
 
 
@@ -97,7 +94,7 @@ describe('HousingHealth', function() {
             date: () => new Date(2017, 5, 20, 10, 0, 0, 0)// note that the month is zero based
         }
         const sut = new HousingHealth(
-            dateOfNextReleaseDateStore(), 'PT12H', healthyElasticsearch(), dateSource);
+            dateOfNextReleaseDateStore(), 'PT12H', dateSource);
         var status;
         var res = {
             status: s => status = s,
@@ -105,12 +102,12 @@ describe('HousingHealth', function() {
                 // ASSERT
                 expect(json.ok).toBe(true);
                 expect(status).toBe(200);
-                done();
             }
         };
 
         // ACT
-        sut.health(res);
+        sut.health(res)
+        .then(() => done());
     });
 
     it('date of next release after threshold returns expected json', function (done) {
@@ -120,7 +117,7 @@ describe('HousingHealth', function() {
             date: () => new Date(2017, 5, 20, 12, 1, 0, 0)// note that the month is zero based
         }
         const sut = new HousingHealth(
-            dateOfNextReleaseDateStore(), 'PT12H', healthyElasticsearch(), dateSource);
+            dateOfNextReleaseDateStore(), 'PT12H', dateSource);
         var status;
         var res = {
             status: s => status = s,
@@ -128,71 +125,12 @@ describe('HousingHealth', function() {
                 // ASSERT
                 expect(json.ok).toBe(false);
                 expect(status).toBe(503);
-                done();
             }
         };
 
         // ACT
-        sut.health(res);
-    });
-
-
-    it('stopped elasticsearch returns expected json', function (done) {
-        // ARRANGE
-        const sut = new HousingHealth(
-            greenPathStore(), 'PT12H', stoppedElasticsearch());
-
-        var status;
-        var res = {
-            status: s => status = s,
-            send: json => {
-                // ASSERT
-                expect(json.ok).toBe(false);
-                expect(status).toBe(503);
-                done();
-            }
-        };
-
-        // ACT
-        sut.health(res);
-    });
-
-    it('unhealthly elasticsearch returns expected json', function (done) {
-        // ARRANGE
-        const sut = new HousingHealth(
-            greenPathStore(), 'PT12H', unhealthlyElasticsearch());
-        var status;
-        var res = {
-            status: s => status = s,
-            send: json => {
-                // ASSERT
-                expect(json.ok).toBe(false);
-                expect(status).toBe(503);
-                done();
-            }
-        };
-
-        // ACT
-        sut.health(res);
-    });
-
-    it('badly formed elasticsearch health returns expected json', function (done) {
-        // ARRANGE
-        const sut = new HousingHealth(
-            greenPathStore(), 'PT12H', malformedHealthElasticsearch());
-        var status;
-        var res = {
-            status: s => status = s,
-            send: json => {
-                // ASSERT
-                expect(json.ok).toBe(false);
-                expect(status).toBe(503);
-                done();
-            }
-        };
-
-        // ACT
-        sut.health(res);
+        sut.health(res)
+        .then(() => done());
     });
 
     function errorStore() {
@@ -244,41 +182,4 @@ describe('HousingHealth', function() {
         }
     }
 
-    function stoppedElasticsearch() {
-        return {
-            cat : {
-                health: function (params, callback) {
-                    callback("error", undefined)
-                }
-            }
-        }
-    }
-
-    function elasticsearchWithHealth(health) {
-        return {
-            cat: {
-                health: function (params, callback) {
-                    callback(undefined, [{ status : health }]);
-                }
-            }
-        };
-    }
-
-    function healthyElasticsearch() {
-        return elasticsearchWithHealth("green");
-    }
-
-    function unhealthlyElasticsearch() {
-        return elasticsearchWithHealth("red");
-    }
-
-    function malformedHealthElasticsearch() {
-        return {
-            cat: {
-                health: function (params, callback) {
-                    callback(undefined, "malformedhealth")
-                }
-            }
-        };
-    }
 });

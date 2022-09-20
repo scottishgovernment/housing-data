@@ -11,40 +11,31 @@ class HousingHealth {
     constructor(
             cpiStore,
             gracePeriod,
-            elasticsearchClient,
             dateSource) {
 
         this.cpiStore = cpiStore;
         this.gracePeriod = gracePeriod;
-        this.elasticsearchClient = elasticsearchClient;
         this.dateSource = require('./dateUtils')(dateSource).dateSource;
     }
 
-    health(res) {
-        async.parallel([
-            cb => checkCPIDataHealth(this.cpiStore, this.gracePeriod, this.dateSource, cb),
-            cb => checkElasticsearchHealth(this.elasticsearchClient, cb)
-        ],
-        (err, results) => {
-            var ok = true;
-            var messages = [];
-            results.forEach(result => {
-                ok = ok && result.ok;
-                Array.prototype.push.apply(messages, result.messages);
-            });
-
-            const status = ok ? 200 : 503;
-            res.status(status);
-            res.send({
-                ok: ok,
-                message: messages ? messages.join('; ') : ''
-            });
+    async health(res) {
+        const cpiHealth = await checkCPIDataHealth(
+            this.cpiStore,
+            this.gracePeriod,
+            this.dateSource);
+        console.log(cpiHealth);
+        const { ok, messages } = cpiHealth;
+        const status = ok ? 200 : 503;
+        res.status(status);
+        res.send({
+            ok: ok,
+            message: messages ? messages.join('; ') : ''
         });
     }
 }
 
-function checkCPIDataHealth(cpiStore, gracePeriod, dateSource, callback) {
-    cpiStore.latest()
+async function checkCPIDataHealth(cpiStore, gracePeriod, dateSource) {
+    return cpiStore.latest()
     .then(cpi => {
         if (!cpi) {
             return { ok:false, messages: ['No CPI data in store'] };
@@ -64,35 +55,7 @@ function checkCPIDataHealth(cpiStore, gracePeriod, dateSource, callback) {
         }
         return { ok: ok, messages: messages };
     }).catch(error => {
-        return { ok:false, messages: [error] };
-    }).then(health => {
-        callback(null, health);
-    });
-}
-
-function checkElasticsearchHealth(elasticsearchClient, callback) {
-
-    var messages = [];
-    var ok = true;
-
-    // check the elasticsearch health
-    elasticsearchClient.cat.health({ format: 'json'}, (esError, esHealth) => {
-        if (esError) {
-            ok = false;
-            messages.push('Unable to contact elasticsearch:' + esError.message || esError);
-        } else {
-            // parse the health info
-            if (esHealth.length !== 1) {
-                ok = false;
-                messages.push('Unexpected data from elastic search health:' + JSON.stringify(esHealth));
-            } else {
-                ok = esHealth[0].status === 'green' || esHealth[0].status === 'yellow';
-                if (!ok) {
-                    messages.push('Elasticsearch health status is ' + esHealth.status);
-                }
-            }
-        }
-        callback(undefined, { ok: ok, messages: messages });
+        return { ok: false, messages: [error] };
     });
 }
 
