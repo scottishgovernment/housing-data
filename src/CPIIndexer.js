@@ -9,27 +9,26 @@
  **/
 class CPIIndexer {
 
-    constructor(elasticsearchClient, store) {
+    constructor(elasticsearchClient) {
         this.elasticsearchClient = elasticsearchClient;
-        this.store = store;
     }
 
     async latest() {
         return fetchDataFromElasticsearch(this.elasticsearchClient);
     }
 
-    async indexData() {
+    async store(cpi) {
         const cpiFromES = await fetchDataFromElasticsearch(this.elasticsearchClient);
-        const cpiFromStore = await this.store.latest();
         // if there is no CPI data in ES or it is out of date then
         // index the data in ES.
-        if (cpiFromES == null || esOutOfDate(cpiFromES, cpiFromStore)) {
+        if (cpiFromES == null || esOutOfDate(cpiFromES, cpi)) {
             await configureMapping(this.elasticsearchClient);
-            await indexToElasticsearch(this.elasticsearchClient, cpiFromStore);
+            await indexToElasticsearch(this.elasticsearchClient, cpi);
         } else {
             console.log('CPIIndexer. Elasticsearch data is up to date.');
         }
     }
+
 }
 
 function esOutOfDate(cpiFromES, cpiFromStore) {

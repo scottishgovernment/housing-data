@@ -5,10 +5,11 @@ describe('RetryingCPIIndexer', function() {
     it('retries until indexer suceeds', function (done) {
         // ARRANGE
         const indexer = indexerSuceedAfterFailures(2);
+        const cpi = {};
         const sut = new RetryingCPIIndexer(indexer, 100);
 
         // ACT
-        sut.update()
+        sut.store(cpi)
         .then(() => {
             // ASSERT
             expect(indexer.getFailureCount()).toBe(2);
@@ -21,12 +22,13 @@ describe('RetryingCPIIndexer', function() {
     it('returns early if already running', function (done) {
         // ARRANGE
         const indexer = indexerSuceedAfterFailures(2);
+        const cpi = {};
         const sut = new RetryingCPIIndexer(indexer, 100);
 
         // ACT
-        sut.update()
+        sut.store(cpi)
         .then(() => {});
-        sut.update()
+        sut.store(cpi)
         .then(() => {
             expect(sut.isRunning).toBeTruthy();
             done();
@@ -36,7 +38,7 @@ describe('RetryingCPIIndexer', function() {
     function indexerSuceedAfterFailures(desiredFailureCount) {
         var failureCount = 0;
         return {
-            indexData: async () => {
+            store: async () => {
                 if (failureCount === desiredFailureCount) {
                     return 'Done';
                 } else {

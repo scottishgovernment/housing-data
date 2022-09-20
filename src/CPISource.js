@@ -43,7 +43,7 @@ class CPISource {
         }
 
         if (!latest || !latest.releaseDate || cpi.releaseDate > latest.releaseDate) {
-            await this.indexer.update()
+            await this.indexer.store(cpi)
             .then(() => console.log('CPISource.  Updated elasticsearch.'))
             .catch(err => {
                 console.log('CPISource. Indexing failed');

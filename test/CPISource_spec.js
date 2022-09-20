@@ -200,7 +200,7 @@ describe('CPISource', function() {
                 };
             },
 
-            async update() {
+            async store(cpi) {
                 this.updated = true;
             }
         }

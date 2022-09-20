@@ -6,11 +6,11 @@ describe('CPIIndexer', function(done) {
     it('out of date data in ES is updated', function (done) {
         // ARRANGE
         const elasticsearch = elasticsearchWithData(cpiWithReleaseDate('2010-01-01'));
-        const store = storeWithData(cpiWithReleaseDate('2011-01-01'));
-        const sut = new CPIIndexer(elasticsearch, store);
+        const cpi = cpiWithReleaseDate('2011-01-01');
+        const sut = new CPIIndexer(elasticsearch);
 
         // ACT
-        sut.indexData()
+        sut.store(cpi)
         .then(() => {
             // ASSERT
             // the data from the store should have been indexed
@@ -23,11 +23,11 @@ describe('CPIIndexer', function(done) {
     it('404 from ES results in new data being indexed in ES', function (done) {
         // ARRANGE
         const elasticsearch = elasticsearchWithNoData();
-        const store = storeWithData(cpiWithReleaseDate('2011-01-01'));
-        const sut = new CPIIndexer(elasticsearch, store);
+        const cpi = cpiWithReleaseDate('2011-01-01');
+        const sut = new CPIIndexer(elasticsearch);
 
         // ACT
-        sut.indexData()
+        sut.store(cpi)
         .then(() => {
             // ASSERT
             // the data from the store should have been indexed
@@ -40,11 +40,11 @@ describe('CPIIndexer', function(done) {
     it('up to date data in elasticsearch is not updated', function (done) {
         // ARRANGE
         const elasticsearch = elasticsearchWithData(cpiWithReleaseDate('2010-01-01'));
-        const store = storeWithData(cpiWithReleaseDate('2010-01-01'));
-        const sut = new CPIIndexer(elasticsearch, store);
+        const cpi = cpiWithReleaseDate('2010-01-01');
+        const sut = new CPIIndexer(elasticsearch);
 
         // ACT
-        sut.indexData()
+        sut.store(cpi)
         .then(() => {
             // ASSERT
             // the data from the store should have been indexed
@@ -64,7 +64,7 @@ describe('CPIIndexer', function(done) {
         const sut = new CPIIndexer(elasticsearch);
 
         // ACT
-        sut.indexData()
+        sut.store(cpiWithReleaseDate('2010-01-01'))
         .then(done.fail)
         .catch(err => {
             // ASSERT
@@ -73,38 +73,17 @@ describe('CPIIndexer', function(done) {
         });
     });
 
-    it('error from store returned by callback', function (done) {
-        // ARRANGE
-        const elasticsearch = elasticsearchWithData(cpiWithReleaseDate('2010-01-01'));
-        const storeErr = {
-            msg: 'error'
-        };
-        const store = failingStore(storeErr);
-        const sut = new CPIIndexer(elasticsearch, store);
-
-        // ACT
-        sut.indexData()
-        .then(done.fail)
-        .catch(err => {
-            // ASSERT
-            // the data from the store should have been indexed
-            expect(err).toBe(storeErr);
-            done();
-        });
-    });
-
-
     it('error from ES index call returned by callback', function (done) {
         // ARRANGE
         const indexErr = {
             msg: 'error'
         };
         const elasticsearch = failingIndexElasticsearch(cpiWithReleaseDate('2010-01-01'), indexErr);
-        const store = storeWithData(cpiWithReleaseDate('2011-01-01'));
-        const sut = new CPIIndexer(elasticsearch, store);
+        const cpi = cpiWithReleaseDate('2011-01-01');
+        const sut = new CPIIndexer(elasticsearch);
 
         // ACT
-        sut.indexData()
+        sut.store(cpi)
         .then(done.fail)
         .catch(err => {
             // ASSERT

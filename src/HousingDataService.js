@@ -32,7 +32,7 @@ class HousingDataService {
         const amILiveCheck = new AmILiveCheck();
         const store = new CPIStore(config.couch.url);
         const onsSource = new URLCPISource(config.cpi.source.url);
-        const indexer = new CPIIndexer(elasticsearchClient, store);
+        const indexer = new CPIIndexer(elasticsearchClient);
         this.retryingIndexer = new RetryingCPIIndexer(indexer, config.cpi.update.retryinterval);
         const source = new CPISource(onsSource, store, this.retryingIndexer);
 

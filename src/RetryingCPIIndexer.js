@@ -15,7 +15,8 @@ class RetryingCPIIndexer {
         return this.indexer.latest();
     }
 
-    async update() {
+    async store(cpi) {
+        this.cpi = cpi;
         if (this.running) {
             return;
         }
@@ -23,7 +24,7 @@ class RetryingCPIIndexer {
         console.log('RetryingCPIIndexer. Running');
         this.running = true;
         while (this.running) {
-            await this.indexer.indexData()
+            await this.indexer.store(this.cpi)
             .then(() => {
                 this.running = false;
             })
@@ -35,6 +36,7 @@ class RetryingCPIIndexer {
                 });
             });
         }
+        console.log('RetryingCPIIndexer. Done');
     }
 
     isRunning() {
