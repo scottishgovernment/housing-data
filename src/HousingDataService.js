@@ -5,6 +5,9 @@ var nodeSchedule = require('node-schedule');
 var express = require('express');
 var expressApp = express();
 
+const CPIIndexer = require('./CPIIndexer');
+const RetryingCPIIndexer = require('./RetryingCPIIndexer');
+
 /**
  * Housing data service.
  *
@@ -14,28 +17,21 @@ var expressApp = express();
 class HousingDataService {
 
     constructor(config) {
-        const ElasticsearchLogger = require('./ElasticsearchLogger');
-        config.elasticsearch.log = ElasticsearchLogger;
-        const elasticsearchClient = new elasticsearch.Client(config.elasticsearch);
-
         const AmILiveCheck = require('./AmILiveCheck');
         const HousingScheduler = require('./HousingScheduler');
         const CPIStore = require('./CPIStore');
         const CPISource = require('./CPISource');
         const HousingHealth = require('./HousingHealth');
         const CPIApp = require('./CPIApp');
-        const CPIIndexer = require('./CPIIndexer');
         const URLCPISource = require('./URLCPISource');
         const RetryingCPIUpdater = require('./RetryingCPIUpdater');
-        const RetryingCPIIndexer = require('./RetryingCPIIndexer');
 
         const amILiveCheck = new AmILiveCheck();
         const store = new CPIStore(config.couch.url);
         const onsSource = new URLCPISource(config.cpi.source.url);
-        const indexer = new CPIIndexer(elasticsearchClient);
-        this.retryingIndexer = new RetryingCPIIndexer(indexer, config.cpi.update.retryinterval);
-        const source = new CPISource(onsSource, store, this.retryingIndexer);
 
+        const targets = this.targets(config);
+        const source = new CPISource(onsSource, store, targets);
         const health = new HousingHealth(store, config.cpi.graceperiod, elasticsearchClient);
 
         this.retryingUpdater =
@@ -48,6 +44,17 @@ class HousingDataService {
 
         const cpiApp = new CPIApp(source, health);
         cpiApp.register(expressApp);
+    }
+
+    targets(config) {
+        var targets = [];
+        const ElasticsearchLogger = require('./ElasticsearchLogger');
+        config.elasticsearch.log = ElasticsearchLogger;
+        const elasticsearchClient = new elasticsearch.Client(config.elasticsearch);
+        const indexer = new CPIIndexer(elasticsearchClient);
+        const retryingIndexer = new RetryingCPIIndexer(indexer, config.cpi.update.retryinterval);
+        targets.push(retryingIndexer);
+        return targets;
     }
 
     run() {

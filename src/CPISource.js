@@ -8,10 +8,10 @@
  **/
 class CPISource {
 
-    constructor(source, store, indexer, dateSource) {
+    constructor(source, store, targets, dateSource) {
         this.source = source;
         this.store = store;
-        this.indexer = indexer;
+        this.targets = targets;
         this.dateUtils = require('./dateUtils')(dateSource);
     }
 
@@ -30,7 +30,17 @@ class CPISource {
             console.log('CPISource.  CPI data in store is up to date.');
         }
 
-        const latest = await this.indexer.latest()
+        for (const target of this.targets) {
+            await this.syncTarget(target, cpi);
+        }
+
+        return cpi;
+    }
+
+    async syncTarget(target, cpi) {
+        const targetName = target.constructor.name;
+        console.log(`Processing target ${targetName}`);
+        const latest = await target.latest()
         .catch(err => {
             console.log('CPISource. Could not determine last release date.', err);
             return null;
@@ -42,17 +52,16 @@ class CPISource {
             console.log('CPISource. Unknown release date');
         }
 
-        if (!latest || !latest.releaseDate || cpi.releaseDate > latest.releaseDate) {
-            await this.indexer.store(cpi)
-            .then(() => console.log('CPISource.  Updated elasticsearch.'))
+        if (!latest || !latest.releaseDate || latest.releaseDate < cpi.releaseDate) {
+            await target.store(cpi)
+            .then(() => console.log('CPISource.  Updated '))
             .catch(err => {
                 console.log('CPISource. Indexing failed');
                 throw err;
             });
         }
-
-        return cpi;
     }
+
 }
 
 module.exports = CPISource;
