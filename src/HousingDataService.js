@@ -58,8 +58,6 @@ class HousingDataService {
 
         // on startup, update the ons data, then schedule regular updates.
         this.retryingUpdater.update()
-        .then(() => this.retryingIndexer.update())
-        .catch(console.log)
         .then(() => this.scheduler.schedule());
     }
 }

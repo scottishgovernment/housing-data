@@ -14,6 +14,10 @@ class CPIIndexer {
         this.store = store;
     }
 
+    async latest() {
+        return fetchDataFromElasticsearch(this.elasticsearchClient);
+    }
+
     async indexData() {
         const cpiFromES = await fetchDataFromElasticsearch(this.elasticsearchClient);
         const cpiFromStore = await this.store.latest();

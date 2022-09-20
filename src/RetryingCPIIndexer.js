@@ -11,6 +11,10 @@ class RetryingCPIIndexer {
         this.running = false;
     }
 
+    async latest() {
+        return this.indexer.latest();
+    }
+
     async update() {
         if (this.running) {
             return;

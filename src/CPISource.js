@@ -16,27 +16,40 @@ class CPISource {
     }
 
     async get() {
+        var cpi;
+
         // get the most recent CPI data from the store
         const cachedCPI = await this.store.latest();
-
-        // if we have cached cpi data and it is not out of date then return that
+        // if we have cached cpi data and it is not out of date then use that
         if (cachedCPI && !this.dateUtils.hasDatePassed(cachedCPI.nextRelease)) {
             console.log('CPISource.  CPI data is up to date.');
-            return cachedCPI;
+            cpi = cachedCPI;
+        } else {
+            cpi = await this.source.get();
+            await this.store.store(cpi);
+            console.log('CPISource.  CPI data in store is up to date.');
         }
 
-        const cpi = await this.source.get();
-        await this.store.store(cpi);
-        console.log('CPISource.  CPI data in store is up to date.');
-
-        // tell the indexer that the data has been updated.
-        await this.indexer.update()
-        .then(() => {
-            console.log('CPISource.  Updated elasticsearch.');
-        })
+        const latest = await this.indexer.latest()
         .catch(err => {
-            console.log('CPISource. Indexing failed', err);
+            console.log('CPISource. Could not determine last release date.', err);
+            return null;
         });
+
+        if (latest && latest.releaseDate) {
+            console.log('CPISource. Latest release date', latest.releaseDate);
+        } else {
+            console.log('CPISource. Unknown release date');
+        }
+
+        if (!latest || !latest.releaseDate || cpi.releaseDate > latest.releaseDate) {
+            await this.indexer.update()
+            .then(() => console.log('CPISource.  Updated elasticsearch.'))
+            .catch(err => {
+                console.log('CPISource. Indexing failed');
+                throw err;
+            });
+        }
 
         return cpi;
     }

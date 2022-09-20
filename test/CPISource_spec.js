@@ -57,13 +57,15 @@ describe('CPISource', function() {
         const dataFromSource = { nextRelease: '2017-01-01'};
         const source = fakeSource(dataFromSource);
         const store = fakeStore(null, undefined, null, undefined);
-        const sut = new CPISource(source, store, anyIndexer());
+        const indexer = anyIndexer();
+        const sut = new CPISource(source, store, indexer);
 
         // ACT
         sut.get()
         .then(data => {
             //ASSERT
             expect(data).toBe(dataFromSource);
+            expect(indexer.updated).toBeTruthy();
             done();
         })
         .catch(done.fail);
@@ -72,17 +74,19 @@ describe('CPISource', function() {
     it('Returns data from source if data in store is out of date', function(done) {
 
         // ARRANGE
-        const dataFromSource = { nextRelease: '2017-01-01'};
+        const dataFromSource = { nextRelease: '2017-02-01', releaseDate: '2017-01-01'};
         const source = fakeSource(dataFromSource);
-        const dataFromStore = { nextRelease: '2017-01-01'};
+        const dataFromStore = { nextRelease: '2016-12-01', releaseDate: '2017-01-01'};
         const store = fakeStore(null, dataFromStore, null, undefined);
-        const sut = new CPISource(source, store, anyIndexer());
+        const indexer = anyIndexer('2016-12-01');
+        const sut = new CPISource(source, store, indexer);
 
         // ACT
         sut.get()
         .then(data => {
             //ASSERT
             expect(data).toBe(dataFromSource);
+            expect(indexer.updated).toBeTruthy();
             done();
         })
         .catch(done.fail);
@@ -90,20 +94,22 @@ describe('CPISource', function() {
 
     it('Returns data from source if data on day of nextUpdate', function(done) {
         // ARRANGE
-        const dataFromSource = { nextRelease: '2017-01-01'};
+        const dataFromSource = { nextRelease: '2017-02-01', releaseDate: '2017-01-01' };
         const source = fakeSource(dataFromSource);
-        const dataFromStore = { nextRelease: '2017-01-01'};
+        const dataFromStore = { nextRelease: '2017-01-01', releaseDate: '2016-12-01' };
         const store = fakeStore(null, dataFromStore, null, undefined);
         const dateSource = {
             date: () => new Date(2017, 01, 01, 12, 0, 0, 0)
         };
-        const sut = new CPISource(source, store, anyIndexer(), dateSource);
+        const indexer = anyIndexer('2016-12-01');
+        const sut = new CPISource(source, store, indexer, dateSource);
 
         // ACT
         sut.get()
         .then(data => {
             // ASSERT
             expect(data).toBe(dataFromSource);
+            expect(indexer.updated).toBeTruthy();
             done();
         })
         .catch(done.fail);
@@ -116,13 +122,15 @@ describe('CPISource', function() {
         const source = fakeSource(dataFromSource);
         const dataFromStore = { nextRelease: '2040-01-01'};
         const store = fakeStore(null, dataFromStore, null, undefined);
-        const sut = new CPISource(source, store, anyIndexer());
+        const indexer = anyIndexer('2016-01-01');
+        const sut = new CPISource(source, store, indexer);
 
         // ACT
         sut.get()
         .then(data => {
             //ASSERT
             expect(data).toBe(dataFromStore);
+            expect(indexer.updated).toBeFalsy();
             done();
         })
         .catch(done.fail);
@@ -178,10 +186,22 @@ describe('CPISource', function() {
         }
     }
 
-    function anyIndexer() {
+    function anyIndexer(releaseDate) {
         return {
+            updated: false,
+            releaseDate: releaseDate,
+
+            async latest() {
+                if (!releaseDate) {
+                    return null;
+                }
+                return {
+                    releaseDate: releaseDate
+                };
+            },
+
             async update() {
-                // noop
+                this.updated = true;
             }
         }
     }
