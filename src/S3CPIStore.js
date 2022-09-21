@@ -12,8 +12,11 @@ class S3CPIStore {
         if (s3Path.protocol !== 's3:') {
             throw new Error(`Invalid protocol for s3 target: ${s3Path.protocol}`);
         }
+        if (!s3Path.pathname) {
+            throw new Error(`Missing pathname for s3 target: ${target}`);
+        }
         this.bucket = s3Path.host;
-        this.key = s3Path.path;
+        this.key = s3Path.pathname.slice(1);
     }
 
     async latest() {

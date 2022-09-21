@@ -5,12 +5,21 @@ describe('S3CPIStore', function() {
     it('parses the target configuration value', function () {
         const sut = new S3CPIStore('eu-west-1', 's3://mybucket/path/to/cpi.json');
         expect(sut.bucket).toBe('mybucket');
-        expect(sut.key).toBe('/path/to/cpi.json');
+        expect(sut.key).toBe('path/to/cpi.json');
     });
 
     it('rejects invalid target configuration value', function (done) {
         try {
             const sut = new S3CPIStore('eu-west-1', 'http://mybucket/path/to/cpi.json');
+            done.fail();
+        } catch (e) {
+            done();
+        }
+    });
+
+    it('requires an object key in the URL', function (done) {
+        try {
+            const sut = new S3CPIStore('eu-west-1', 's3://mybucket');
             done.fail();
         } catch (e) {
             done();
