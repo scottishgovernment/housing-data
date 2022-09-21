@@ -56,8 +56,7 @@ class HousingDataService {
         if (config.s3.enabled) {
             const s3Target = new S3CPIStore(
                 config.s3.region,
-                config.s3.bucket,
-                config.s3.key);
+                config.s3.target);
             targets.push(s3Target);
         }
         return targets;

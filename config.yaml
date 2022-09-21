@@ -18,6 +18,5 @@ elasticsearch:
 
 s3:
   enabled: false
-  region:
-  bucket:
-  key: housing/cpi.json
+  region: ''
+  target: ''

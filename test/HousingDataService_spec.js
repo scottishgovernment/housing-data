@@ -26,7 +26,8 @@ describe('HousingDataService', function() {
                 enabled: esEnabled
             },
             s3: {
-                enabled: s3Enabled
+                enabled: s3Enabled,
+                target: s3Enabled ? 's3://bucket/housing/cpi.json' : undefined
             },
             cpi: {
                 update: {

@@ -1,14 +1,19 @@
 const s3client = require('@aws-sdk/client-s3');
+const url = require('url');
 
 /**
  * Stores CPI data in Amazon S3.
  */
 class S3CPIStore {
 
-    constructor(region, bucket, key) {
+    constructor(region, target) {
         this.s3Client = new s3client.S3Client({ region: region });
-        this.bucket = bucket;
-        this.key = key;
+        const s3Path = url.parse(target);
+        if (s3Path.protocol !== 's3:') {
+            throw new Error(`Invalid protocol for s3 target: ${s3Path.protocol}`);
+        }
+        this.bucket = s3Path.host;
+        this.key = s3Path.path;
     }
 
     async latest() {
