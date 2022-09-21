@@ -7,6 +7,7 @@ var expressApp = express();
 
 const CPIIndexer = require('./CPIIndexer');
 const RetryingCPIIndexer = require('./RetryingCPIIndexer');
+const S3CPIStore = require('./S3CPIStore');
 
 /**
  * Housing data service.
@@ -30,7 +31,7 @@ class HousingDataService {
         const store = new CPIStore(config.couch.url);
         const onsSource = new URLCPISource(config.cpi.source.url);
 
-        const targets = this.targets(config);
+        const targets = HousingDataService.targets(config);
         const source = new CPISource(onsSource, store, targets);
         const health = new HousingHealth(store, config.cpi.graceperiod);
 
@@ -46,15 +47,29 @@ class HousingDataService {
         cpiApp.register(expressApp);
     }
 
-    targets(config) {
+    static targets(config) {
         var targets = [];
+        if (config.elasticsearch.enabled) {
+            const esTarget = this.elasticsearchTarget(config);
+            targets.push(esTarget);
+        }
+        if (config.s3.enabled) {
+            const s3Target = new S3CPIStore(
+                config.s3.region,
+                config.s3.bucket,
+                config.s3.key);
+            targets.push(s3Target);
+        }
+        return targets;
+    }
+
+    static elasticsearchTarget(config) {
         const ElasticsearchLogger = require('./ElasticsearchLogger');
         config.elasticsearch.log = ElasticsearchLogger;
         const elasticsearchClient = new elasticsearch.Client(config.elasticsearch);
         const indexer = new CPIIndexer(elasticsearchClient);
         const retryingIndexer = new RetryingCPIIndexer(indexer, config.cpi.update.retryinterval);
-        targets.push(retryingIndexer);
-        return targets;
+        return retryingIndexer;
     }
 
     run() {

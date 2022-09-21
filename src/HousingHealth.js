@@ -23,7 +23,6 @@ class HousingHealth {
             this.cpiStore,
             this.gracePeriod,
             this.dateSource);
-        console.log(cpiHealth);
         const { ok, messages } = cpiHealth;
         const status = ok ? 200 : 503;
         res.status(status);
