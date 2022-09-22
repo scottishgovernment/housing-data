@@ -1,12 +1,9 @@
 'use strict';
 
-var elasticsearch = require('elasticsearch');
 var nodeSchedule = require('node-schedule');
 var express = require('express');
 var expressApp = express();
 
-const CPIIndexer = require('./CPIIndexer');
-const RetryingCPIIndexer = require('./RetryingCPIIndexer');
 const S3CPIStore = require('./S3CPIStore');
 
 /**
@@ -49,10 +46,6 @@ class HousingDataService {
 
     static targets(config) {
         var targets = [];
-        if (config.elasticsearch.enabled) {
-            const esTarget = this.elasticsearchTarget(config);
-            targets.push(esTarget);
-        }
         if (config.s3.enabled) {
             const s3Target = new S3CPIStore(
                 config.s3.region,
@@ -60,15 +53,6 @@ class HousingDataService {
             targets.push(s3Target);
         }
         return targets;
-    }
-
-    static elasticsearchTarget(config) {
-        const ElasticsearchLogger = require('./ElasticsearchLogger');
-        config.elasticsearch.log = ElasticsearchLogger;
-        const elasticsearchClient = new elasticsearch.Client(config.elasticsearch);
-        const indexer = new CPIIndexer(elasticsearchClient);
-        const retryingIndexer = new RetryingCPIIndexer(indexer, config.cpi.update.retryinterval);
-        return retryingIndexer;
     }
 
     run() {

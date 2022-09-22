@@ -26,10 +26,21 @@ It also provides a REST interface to allow manipulate rent pressure zone informa
   * Default: 0 * * * *
 
 * `cpi.update.retryinterval`
-  * The retry interval in millis to use when retrying indexing cpi data in elasticsearch
+  * The retry interval in millis to use when retrying CPI updates
   * Type: int
-  * Default: 60000
+  * Default: 10000
 
-* `elasticsearch.logLevel`
-  * Log level for elastic search library.  
-  * Default: warning
+* `s3.enabled`
+  * Flag indicating whether to copy CPI data to S3
+  * Type: boolean
+  * Default: false
+
+* `s3.region`
+  * The AWS region to use when accessing s3.
+  * Type: string
+  * Default: (none)
+
+* `s3.target`
+  * The S3 URL to which CPI data should be copied if enabled. (e.g. s3://mybucket/cpi.json)
+  * Type: string
+  * Default: (none)

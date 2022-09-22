@@ -17,7 +17,6 @@
     "async": "^2.5.0",
     "config-weaver": "0.0.15",
     "couchdb-push": "^3.1.0",
-    "elasticsearch": "^16.7.2",
     "express": "^4.15.3",
     "fast-csv": "^2.4.0",
     "got": "^11.8.2",

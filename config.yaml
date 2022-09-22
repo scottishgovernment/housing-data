@@ -12,10 +12,6 @@ cpi:
 couch:
   url: http://localhost:5984/
 
-elasticsearch:
-  enabled: true
-  host: localhost:9200
-
 s3:
   enabled: false
   region: ''
