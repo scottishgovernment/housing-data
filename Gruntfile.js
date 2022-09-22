@@ -62,8 +62,7 @@ module.exports = function(grunt) {
                     }
                 },
                 exclusions: [
-                  'src/AmILiveCheck.js',
-                  'src/ElasticsearchLogger.js'
+                  'src/AmILiveCheck.js'
                 ],
                 working: {
                   directory: "target/sonar"

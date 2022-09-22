@@ -7,7 +7,6 @@
     "text-summary"
   ],
   "include": "src/*.js",
-  "exclude": "src/ElasticsearchLogger.js",
   "all": true
 }
 
