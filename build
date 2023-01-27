@@ -24,7 +24,7 @@ else
 fi
 
 rm -f debian/changelog
-dch --create --package housing-data -v $VERSION ""
+dch --create --controlmaint --package housing-data -v $VERSION ""
 ./debian/rules clean
 ./debian/rules build
 fakeroot ./debian/rules binary OUTDIR=.
