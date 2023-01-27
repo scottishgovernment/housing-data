@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "description": "Stores housing data including rent pressure zone information",
   "scripts": {
-    "test": "grunt test",
-    "postshrinkwrap": "sealant"
+    "test": "grunt test"
   },
   "author": {
     "name": "mygov.scot team",
@@ -34,7 +33,6 @@
     "jasmine-node": "^3.0.0",
     "load-grunt-config": "^4.0.1",
     "nock": "^13.2.9",
-    "nyc": "^15.1.0",
-    "sealant": "^0.1.1"
+    "nyc": "^15.1.0"
   }
 }
