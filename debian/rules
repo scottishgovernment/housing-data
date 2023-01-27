@@ -13,11 +13,11 @@ override_dh_auto_test:
 
 override_dh_install:
 	dh_install
-	npm ls --parseable | \
+	npm ls --parseable --all | \
 	  sed "s@$$PWD/node_modules/@@" | \
 	  sort \
 	  > target/deps-all.txt
-	npm ls --parseable --production | \
+	npm ls --parseable --all --production | \
 	sed "s@$$PWD/node_modules/@@" | \
 	  sort \
 	  > target/deps-prod.txt
