@@ -18,7 +18,7 @@
     "config-weaver": "0.0.15",
     "couchdb-push": "^3.1.0",
     "express": "^4.15.3",
-    "fast-csv": "^2.4.0",
+    "fast-csv": "^4.3.6",
     "got": "^11.8.2",
     "moment": "^2.18.1",
     "nano": "^10.0.0",
