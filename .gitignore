@@ -1,5 +1,7 @@
 *.iml
 *.deb
+.vscode
+.scannerwork
 .sonar
 couch/ajv
 couch/fast-deep-equal.js

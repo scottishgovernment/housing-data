@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "description": "Stores housing data including rent pressure zone information",
   "scripts": {
-    "test": "grunt test"
+    "validator": "node validator.js",
+    "test": "nyc jasmine-node --junitreport --output target/reports test"
   },
   "author": {
     "name": "mygov.scot team",
@@ -26,12 +27,8 @@
   },
   "devDependencies": {
     "ajv": "^8.11.0",
-    "grunt": "^1.5.3",
-    "grunt-shell": "^4.0.0",
-    "grunt-sonar-runner": "^3.0.2",
     "jasmine-beforeall": "^0.1.1",
     "jasmine-node": "^3.0.0",
-    "load-grunt-config": "^4.0.1",
     "nock": "^13.2.9",
     "nyc": "^15.1.0"
   }

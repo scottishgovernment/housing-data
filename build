@@ -1,10 +1,6 @@
 #!/bin/sh -el
 VERSION=${VERSION:-0.$(date +%Y%m%d%H%M)}
 
-if ! test -t 1; then
-  grunt_opts="--no-color"
-fi
-
 while test $# -gt 0; do
   case "$1" in
     -v)
@@ -15,12 +11,10 @@ while test $# -gt 0; do
   shift
 done
 
-grunt $grunt_opts validator
-grunt --no-color --stack --verbose test
-if [ -z "$ci" ]; then
-  grunt $grunt_opts sonar
-else
-  grunt $grunt_opts sonar-ci
+npm run validator
+npm run test
+if [ -n "$ci" ]; then
+  sonar-scanner
 fi
 
 rm -f debian/changelog
