@@ -3,6 +3,7 @@
 .vscode
 .scannerwork
 .sonar
+out/
 couch/ajv
 couch/fast-deep-equal.js
 couch/validate.js
