@@ -12,10 +12,10 @@ class CPIParser {
         const monthlyPattern = /^\d{4} [A-Z]{3}$/;
         var cpiData = {
             type: 'cpi',
-            cdid: undefined,
-            datasetId: undefined,
-            releaseDate: undefined,
-            nextRelease: undefined,
+            cdid: null,
+            datasetId: null,
+            releaseDate: null,
+            nextRelease: null,
             importTimestamp: new Date(),
             data: []
         };
@@ -57,9 +57,9 @@ class CPIParser {
             .on('end', () => {
                 const validationErrors = validateCPIData(cpiData);
                 if (validationErrors.length === 0) {
-                    callback(undefined, cpiData);
+                    callback(null, cpiData);
                 } else {
-                    callback(validationErrors, undefined);
+                    callback(validationErrors, null);
                 }
             });
     }

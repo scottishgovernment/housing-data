@@ -42,7 +42,7 @@ describe('CPIParser', function() {
           // ASSERT
 
           // should contains expected metedata
-          expect(cpiData).toBe(undefined);
+          expect(cpiData).toBeNull();
           expect(error).toBeDefined()
           done();
         });
