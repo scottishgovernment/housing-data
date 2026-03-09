@@ -5,7 +5,7 @@
  **/
 const CPIParser = require('./CPIParser');
 const util = require('util');
-const got = require('got');
+const got = require('got').got;
 
 class URLCPISource {
 
