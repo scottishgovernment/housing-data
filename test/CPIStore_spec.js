@@ -1,15 +1,34 @@
 var CPIStore = require('../src/CPIStore.js');
+const { MockAgent, setGlobalDispatcher, getGlobalDispatcher } = require('undici');
 
 describe('CPIStore', function() {
 
-    const nock = require('nock');
+    let mockAgent;
+    let mockPool;
+    let originalDispatcher;
+
+    beforeEach(function() {
+        originalDispatcher = getGlobalDispatcher();
+        mockAgent = new MockAgent();
+        setGlobalDispatcher(mockAgent);
+        mockAgent.disableNetConnect();
+        mockPool = mockAgent.get('http://localhost:1111');
+    });
+
+    afterEach(async function() {
+        await mockAgent.close();
+        setGlobalDispatcher(originalDispatcher);
+    });
 
     it('returns latest if present', function (done) {
 
         // ARRANGE
-        require('nock')('http://localhost:1111/')
-            .get('/ons/_design/ons/_view/cpi?limit=1&include_docs=true&descending=true')
-            .reply(200, sampleLatest());
+        mockPool.intercept({
+            path: '/ons/_design/ons/_view/cpi?limit=1&include_docs=true&descending=true',
+            method: 'GET'
+        }).reply(200, JSON.stringify(sampleLatest()), {
+            headers: { 'content-type': 'application/json' }
+        });
         const sut = new CPIStore('http://localhost:1111/');
 
         // ACT
@@ -26,9 +45,12 @@ describe('CPIStore', function() {
     it('no latest', function (done) {
 
         // ARRANGE
-        require('nock')('http://localhost:1111/')
-            .get('/ons/_design/ons/_view/cpi?limit=1&include_docs=true&descending=true')
-            .reply(200, noLatest());
+        mockPool.intercept({
+            path: '/ons/_design/ons/_view/cpi?limit=1&include_docs=true&descending=true',
+            method: 'GET'
+        }).reply(200, JSON.stringify(noLatest()), {
+            headers: { 'content-type': 'application/json' }
+        });
         const sut = new CPIStore('http://localhost:1111/');
 
         // ACT
@@ -43,9 +65,10 @@ describe('CPIStore', function() {
     it('error from latest', function (done) {
 
         // ARRANGE
-        require('nock')('http://localhost:1111/')
-            .get('/ons/_design/ons/_view/cpi?limit=1&include_docs=true&descending=true')
-            .replyWithError({});
+        mockPool.intercept({
+            path: '/ons/_design/ons/_view/cpi?limit=1&include_docs=true&descending=true',
+            method: 'GET'
+        }).replyWithError(new Error('connection error'));
         const sut = new CPIStore('http://localhost:1111/');
 
         // ACT
@@ -60,9 +83,12 @@ describe('CPIStore', function() {
     it('500 from latest', function (done) {
 
         // ARRANGE
-        require('nock')('http://localhost:1111/')
-            .get('/ons/_design/ons/_view/cpi?limit=1&include_docs=true&descending=true')
-            .reply(500, {});
+        mockPool.intercept({
+            path: '/ons/_design/ons/_view/cpi?limit=1&include_docs=true&descending=true',
+            method: 'GET'
+        }).reply(500, JSON.stringify({}), {
+            headers: { 'content-type': 'application/json' }
+        });
         const sut = new CPIStore('http://localhost:1111/');
 
         // ACT
@@ -79,9 +105,12 @@ describe('CPIStore', function() {
 
         // ARRANGE
         var cpi = sampleCpi();
-        nock('http://localhost:1111/')
-            .get('/ons/_design/ons/_view/cpi?key=%22date%22')
-            .reply(200, sampleLatest);
+        mockPool.intercept({
+            path: '/ons/_design/ons/_view/cpi?key=%22date%22',
+            method: 'GET'
+        }).reply(200, JSON.stringify(sampleLatest()), {
+            headers: { 'content-type': 'application/json' }
+        });
         const sut = new CPIStore('http://localhost:1111/');
 
         // ACT
@@ -94,9 +123,12 @@ describe('CPIStore', function() {
 
         // ARRANGE
         var cpi = sampleCpi();
-        nock('http://localhost:1111/')
-            .get('/ons/_design/ons/_view/cpi?key=%22date%22')
-            .reply(500, {});
+        mockPool.intercept({
+            path: '/ons/_design/ons/_view/cpi?key=%22date%22',
+            method: 'GET'
+        }).reply(500, JSON.stringify({}), {
+            headers: { 'content-type': 'application/json' }
+        });
         const sut = new CPIStore('http://localhost:1111/');
 
         // ACT

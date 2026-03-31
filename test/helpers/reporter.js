@@ -1,3 +1,4 @@
+require('net').setDefaultAutoSelectFamily(false);
 const reporters = require('jasmine-reporters');
 const reporter = new reporters.JUnitXmlReporter({
     savePath: 'out/reports',
