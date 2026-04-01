@@ -13,8 +13,18 @@ if [ -n "$couchdb_user" ] && [ -n "$couchdb_password" ]; then
   rest=${remote#*//}
   remote="${proto}://${couchdb_user}:${couchdb_password}@${rest}"
 fi
+echo "Checking database exists."
+if ! curl -o /dev/null -sfI "$remote"; then
+  curl -X PUT "$remote"
+fi
+headers=$(curl -sSI localhost:5984/ons/_design/ons)
+rev=$(echo "$headers" | awk -F": " '$1=="ETag" { gsub("[\"\r]",""); print $2 }')
 echo "Updating design document."
-../node_modules/.bin/couchdb-push "$remote" .
+curl -sSf \
+  -X PUT \
+  -H 'Content-Type: application/json' \
+  -d @../design.json \
+  "$remote/_design/ons${rev:+?rev=$rev}"
 echo "Updating security document."
 curl -sSf \
   -X PUT \

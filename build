@@ -12,6 +12,7 @@ while test $# -gt 0; do
 done
 
 npm run validator
+npm run design
 npm run test
 if [ -n "$ci" ]; then
   sonar-scanner

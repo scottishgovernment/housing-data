@@ -4,6 +4,7 @@
 .scannerwork
 .sonar
 out/
+design.json
 couch/ajv
 couch/fast-deep-equal.js
 couch/validate.js
