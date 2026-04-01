@@ -1,7 +1,6 @@
 'use strict';
 
 var moment = require('moment');
-var async = require('async');
 
 /**
  * Health check logic.
