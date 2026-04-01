@@ -16,7 +16,7 @@
         "fast-csv": "^2.4.0",
         "got": "^14.6.6",
         "moment": "^2.18.1",
-        "nano": "^11.0.4",
+        "nano": "^11.0.5",
         "node-schedule": "^1.2.3",
         "prettycron": "^0.10.0"
       },
@@ -3483,9 +3483,9 @@
       "license": "MIT"
     },
     "node_modules/nano": {
-      "version": "11.0.4",
-      "resolved": "http://nexus.digital.gov.uk/repository/npm-all/nano/-/nano-11.0.4.tgz",
-      "integrity": "sha512-VbJ89lLD0QW7yIZ59luUhKJuwv4hNwC0NQ0UmeGOHE34TPGiaVd2bhiWRymIAS/1a/fDEBuaYURAI8HtRR+VAw==",
+      "version": "11.0.5",
+      "resolved": "https://registry.npmjs.org/nano/-/nano-11.0.5.tgz",
+      "integrity": "sha512-yLYmFH7S33OWYPAG12wNqMR6l9hC3qOWLbr7hZPqKBVKO8BYhAaLlWENeJEpPY8Rm12lGvzKWBp8LGEgWhEqmw==",
       "license": "Apache-2.0",
       "engines": {
         "node": ">=20.0"
@@ -7049,9 +7049,9 @@
       "integrity": "sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g="
     },
     "nano": {
-      "version": "11.0.4",
-      "resolved": "http://nexus.digital.gov.uk/repository/npm-all/nano/-/nano-11.0.4.tgz",
-      "integrity": "sha512-VbJ89lLD0QW7yIZ59luUhKJuwv4hNwC0NQ0UmeGOHE34TPGiaVd2bhiWRymIAS/1a/fDEBuaYURAI8HtRR+VAw=="
+      "version": "11.0.5",
+      "resolved": "https://registry.npmjs.org/nano/-/nano-11.0.5.tgz",
+      "integrity": "sha512-yLYmFH7S33OWYPAG12wNqMR6l9hC3qOWLbr7hZPqKBVKO8BYhAaLlWENeJEpPY8Rm12lGvzKWBp8LGEgWhEqmw=="
     },
     "negotiator": {
       "version": "0.6.1",
